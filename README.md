@@ -27,11 +27,13 @@
 ---
 
 ## Scoring Criteria (100 points total):
-8+ characters                 → 20 points
-Uppercase letters             → 10 points
-Lowercase letters             → 10 points
-Symbol(s) (at least one)      → 20 points
-Digit(s) (at least one)       → 20 points
-No 3+ repeating chars         → 20 points
+| Criteria | Points |
+|----------|--------|
+| 8+ characters | 20 |
+| Uppercase letters | 10 |
+| Lowercase letters | 10 |
+| Symbol(s) (at least one) | 20 | 
+| Digit(s) (at least one) | 20 | 
+| No 3+ repeating chars | 20 |
 
-*Strong threshold             → ≥80 points
+**Strong Threshold**             → ≥80 points
