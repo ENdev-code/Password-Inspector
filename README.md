@@ -2,7 +2,7 @@
 
 **A privacy-first Python tool for password strength analysis and breach detection.**
 
-> **No logs. No storage. Only 5 hash characters sent to HIBP.**
+> **No logs. No storage. Just Clarity**
 
 ---
 
