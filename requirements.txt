@@ -1,4 +1,6 @@
 # Password Inspector v1.1
+#Copyright (c) 2025 Emmanuel Nkhoma
+#MIT License - See LICENSE file
 # Core dependencies for strength + breach checking
 
 requests>=2.25.1

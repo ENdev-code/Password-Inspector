@@ -1,9 +1,11 @@
+"""
+Password Inspector v1.1
+Copyright (c) 2025 Emmanuel Nkhoma
+MIT License - See LICENSE file
+"""
+
 import re
-import hashlib
-import sys
-import argparse
-from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 
 #basic password strength checker

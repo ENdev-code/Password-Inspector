@@ -1,3 +1,9 @@
+"""
+Password Inspector v1.1
+Copyright (c) 2025 Emmanuel Nkhoma
+MIT License - See LICENSE file
+"""
+
 import hashlib
 from typing import Tuple, Optional
 import sys

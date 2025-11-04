@@ -4,6 +4,10 @@
 
 > **No logs. No storage. Just Clarity.**
 
+**Author**: Emmanuel Nkhoma  
+**GitHub**: [@ENdev-code](https://github.com/ENdev-code)  
+**License**: MIT  
+**Created**: November 2025
 ---
 
 ## Features
