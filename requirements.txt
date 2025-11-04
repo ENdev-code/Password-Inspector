@@ -1,0 +1,4 @@
+# Password Inspector v1.1
+# Core dependencies for strength + breach checking
+
+requests>=2.25.1
