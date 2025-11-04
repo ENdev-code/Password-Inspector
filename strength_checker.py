@@ -1,5 +1,10 @@
 import re
-from typing import Dict, List
+import hashlib
+import sys
+import argparse
+from pathlib import Path
+from typing import Dict, List, Tuple
+
 
 #basic password strength checker
 def checkStrength(password: str) -> Dict[str, object]:
@@ -63,9 +68,9 @@ def checkStrength(password: str) -> Dict[str, object]:
     strong: bool = final_score >= 80
 
     if not strong and final_score >= 50:
-        issues.append("Password strength is low: Consider editing or changing password.")
+        issues.append(f"Password strength is low [Score {final_score}%]: Consider editing or changing password.")
     elif not strong and (final_score < 50 and final_score >=0):
-        issues.append("Password is poor: Change password.")
+        issues.append(f"Password is poor [Score: {final_score}%]: Change password.")
 
     #8. Dict output
     return {
@@ -73,41 +78,3 @@ def checkStrength(password: str) -> Dict[str, object]:
         "issues": issues,
         "strong": strong
     }
-
-
-if __name__ == "__main__":
-
-    #Greeting and Manual
-    print("\n" + "="*80)
-    print("                          PASSWORD INSPECTOR")
-    print("="*80)
-    print("WHAT I DO:\n\n                      Receive your password and \n\n                   tell you how strong "
-          "it is based \n\n            on password best practices like 8+ characters,\n\n                uppercase "
-          "and lowercase letters, e.t.c.")
-    print("=" * 80)
-    print("                     PASSWORD INSPECTING CRITERIA")
-    print("=" * 80)
-    print("This is my grading system: \n\n         1. 8+ Characters = 20 points \n\n         2. Uppercase Letters ["
-          "A-Z] = 10 points \n\n         3. Lowercase Letters [a-z] = 10 points \n\n         4. Symbols = 20 points "
-          "\n\n         5. Digits [0-9] = 20 points \n\n         6. No 3+ recurring characters [e.g. 1111, "
-          "aaa] = 20 points\n\n           [total Score: 100 points]")
-    print("=" * 80)
-
-
-    #Getting Password for Processing
-    pw = input("Enter password: ").strip()
-    if not pw:
-        print("No password entered.")
-        exit()
-
-    result = checkStrength(pw)
-    print
-    print(f"\nPassword Strength: {result['score']}/100")
-    if result['issues']:
-        print("Note and Fix These Issues: " + " → ".join(result['issues']))
-    else:
-        print("All checks passed!")
-
-    status = "Strong!" if result['strong'] else "Weak — Change Password."
-    print(f"{status}")
-    print("\n[Privacy: Password processed in memory only. No logs.]")
