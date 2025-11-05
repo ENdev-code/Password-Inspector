@@ -11,9 +11,7 @@
 ---
 
 ## Features
-
->**Breach Detection** has finally been added!
-Do you know if your password has been breached?
+Below is a description of the features Password Inspector can provide for you. 
 
 | Feature | Description |
 |---------|-------------|
@@ -28,6 +26,8 @@ Do you know if your password has been breached?
 ---
 
 ## Scoring Criteria (100 points total):
+Below is the scoring criteria for passwords that Password Inspector will use 
+
 | Criteria | Points |
 |----------|--------|
 | 8+ characters | 20 |
