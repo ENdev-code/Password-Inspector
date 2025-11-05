@@ -1,4 +1,4 @@
-# Password Inspector v1.1
+# Password Inspector v1.2
 
 **A privacy-first Python tool for password strength analysis and breach detection.**
 
@@ -19,17 +19,11 @@ Do you know if your password has been breached?
 |---------|-------------|
 | **Strength Scoring** | 0–100 score based on security best practices |
 | **Breach Detection** | Checks Have I Been Pwned via **k-anonymity** |
+| **Batch Mode** | Audit wordlists (company passwords, leaks) |
+| **CSV Export** | `--csv` for audit reports |
 | **Transparent Rules** | See exactly how points are earned/lost |
 | **Zero Logging** | Password never saved, never sent in plaintext |
 
----
-
-## Future Features 
-
-| Feature | Description |
-|---------|-------------|
-| **Batch Mode** | Audit wordlists (company passwords, leaks) |
-| **CSV Export** | `--csv` for audit reports |
 
 ---
 
