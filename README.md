@@ -1,3 +1,5 @@
+# Password Inspector v1.3
+
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
 [![CLI Tool](https://img.shields.io/badge/tool-CLI-red)](#how-to-use)
 [![Version: v1.3](https://img.shields.io/badge/version-v1.3-success)](https://github.com/ENdev-code/Password-Inspector/releases)
@@ -5,23 +7,31 @@
 [![Security: Privacy-First](https://img.shields.io/badge/security-privacy--first-green)](#privacy--security)
 [![HIBP k-anonymity](https://img.shields.io/badge/HIBP-k--anonymity-orange)](#features)
 
-# Password Inspector v1.3
+
 
 **A privacy-first Python tool for password strength analysis and breach detection via Have I Been Pwned (HIBP) API.**
 
 > **No logs. No storage. Just Clarity.**
 
-Password Inspector is an open-source, modular CLI tool designed and created fro cybersecurity enthusiasts, auditors, developers and corporate IT teams. It evaluates password strength based on best practices and checks if passwords have been breached via k-anonymity ensuring that no passwords are logged nor are they sent in plaintext. Built cleanly, with maintainable code and documentation under MIT License.
+Password Inspector is an open-source, modular CLI tool designed and created for cybersecurity enthusiasts, auditors, developers and corporate IT teams. It evaluates password strength based on best practices and checks if passwords have been breached via k-anonymity ensuring that no passwords are logged nor are they sent in plaintext. Built cleanly, with maintainable code and documentation under MIT License.
 
 
 **Author**: Emmanuel Nkhoma  
 **GitHub**: [@ENdev-code](https://github.com/ENdev-code)  
 **License**: MIT  
-**Created**: November 2025
-
+**Created**: November 2025  
 **Current Version**: `v1.3`
+
 ---
 
+## Table of Contents
+- [Features](#features)
+- [Scoring Criteria](#scoring-criteria-100-points-total)
+- [Use Cases](#use-cases)
+- [Installation](#installation)
+- [How to Use](#how-to-use)
+
+---
 ## Features
 Below is a description of the features Password Inspector can provide for you. 
 
