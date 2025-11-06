@@ -1,5 +1,5 @@
 """
-Password Inspector v1.2
+Password Inspector v1.3
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """
@@ -50,7 +50,7 @@ def main():
     parser.add_argument(
         "--csv",
         action="store_true",
-        help="Output result of inspection as CSV file"
+        help="Generate CSV file with Password Inspector details about inspected passwords."
     )
 
     #1.3 Create an argument to output the current version of Password Inspector
@@ -58,6 +58,13 @@ def main():
         "--version",
         action="version",
         help=f"Password Inspector version {__version__}"
+    )
+
+    #1.4 Argument for creating reports, suitable for security audits
+    parser.add_argument(
+        "--report",
+        action="store_true",
+        help="Generate Password Inspector report for inspected passwords."
     )
 
     #2. Parse the arguments in Parser into a variable: args
@@ -79,8 +86,8 @@ def main():
             print(f"No passwords in file: '{path.name}'")
             return
 
-        print(f"Loading {len(passwords)} passwords from: '{path.name}' ...")
         printGreeting()
+        print(f"Loading {len(passwords)} passwords from: '{path.name}' ... \n")
 
         #3.3. Iterate through passwords array and process passwords
         inspected_passwords = []
@@ -104,13 +111,13 @@ def main():
         #4. Output
         print("=" * 80)
         print(f"\n                  BATCH PASSWORD INSPECTION COMPLETE! \n\n"
-              f"Weak Passwords (%):{weak_passwords:,}% {(weak_passwords/len(inspected_passwords)) *100} \n"
-              f"Breached Passwords (%): {pwned_passwords:,}% {(pwned_passwords/len(inspected_passwords))*100} \n")
+              f"Weak Passwords (%): {(weak_passwords/len(inspected_passwords)) *100:.2f}% [{weak_passwords:,}/{len(inspected_passwords)}] \n"
+              f"Breached Passwords (%): {(pwned_passwords/len(inspected_passwords))*100:.2f}% [{pwned_passwords:,}/{len(inspected_passwords)}] \n")
         print("=" * 80)
 
         #5. Check if CSV has been toggled, if so, create and output CSV file for batch password inspection
         if args.csv:
-            csv_writer = csv.writer(sys.stdout)
+            csv_writer = csv.writer(sys.stdout, lineterminator="\n")
             csv_writer.writerow([ #Header Row
                 "password",
                 "score",
@@ -122,28 +129,100 @@ def main():
 
             #Loop that adds rows in the CSV for fields in the header row
             for ip in inspected_passwords:
+                strong = "Yes" if ip['strong'] else "No" or 'No'
+                breached = "Yes" if ip['pwned'] else "No" or 'No'
+                breach_count = ip['breach_count'] if ip['pwned'] else 0
+
+                #cleaning up issues, if any are present for that password
+                if ip['issues']:
+                    clean_issues:str = []
+                    for issue in ip['issues']:
+                        clean = issue.strip().lstrip("| ").strip()
+                        if clean:
+                            clean_issues.append(clean)
+                    issues = "\n".join(clean_issues)
+                else:
+                    issues = "None"
+
                 csv_writer.writerow([
                     ip['password'],
                     ip['score'],
-                    "Yes" if ip['strong'] else "No" or 'No',
-                    "Yes" if ip['pwned'] else "No" or 'No',
-                    ip['breach_count'],
-                    " | \n\n" .join(ip['issues'])
+                    strong,
+                    breached,
+                    breach_count,
+                    issues
                 ])
 
             print("\n CSV Written to STDOUT")
+            print("Privacy: K-anonymity and no passwords are logged.")
+
+        #5.1. CSV hasn't been toggled but report has been toggled
+        elif args.report:
+            # *** HUMAN READABLE AUDIT REPORT ***
+            print("=" * 80)
+            print(" " * 25 + "PASSWORD INSPECTOR REPORT")
+            print("=" * 80)
+
+            for ip in inspected_passwords:
+                password = ip['password']
+                score = ip['score']
+                strong = "Strong" if not ip['pwned'] and ip['score'] >= 80 else "Weak Password"
+                status = "Breached" if ip['pwned'] else "Safe: No Breach Found"
+                breach_count = ip['breach_count'] if ip['pwned'] else 0
+
+                print(f"\nINSPECTED PASSWORD: {password} \n\n"
+                      f"SECURITY SCORE:         {score} \n"
+                      f"BREACH STATUS:          {status} \n"
+                      f"BREACH COUNT:           {breach_count}\n"
+                      f"STRENGTH LEVEL:         {strong}\n")
+
+
+                if ip['issues']:
+                    print("\nPASSWORD ISSUES:\n")
+                    for issue in ip['issues']:
+                        print(f" -> {issue}")
+                    if ip['pwned']:
+                        print(f" -> Breached {breach_count} times: CHANGE PASSWORD ASAP")
+                    print("\n")
+                    print("="*80)
+                else:
+                    if ip['pwned']:
+                        print("\nPASSWORD ISSUES:\n")
+                        print(f" -> Breached {breach_count} times: CHANGE PASSWORD ASAP")
+                        print("\n ** Password has no issues (Based on Password Inspecting Criteria)\n")
+                    else:
+                        print("\n ** Password has no issues (Based on Password Inspecting Criteria)\n")
+
+                    print("="*80)
+
+            #End of report
+            print(" " * 25 + "END OF PASSWORD INSPECTOR REPORT\n\n"
+                             "      Privacy: K-anonymity and no passwords are logged.")
+            print("=" * 80)
+
+        #5.2. Both CSV and report have not been toggled
         else:
-            #CSV has not been toggled
             for ip in inspected_passwords:
                 print("=" * 80)
                 status = "Breached" if ip['pwned'] else "Safe: Not Breached"
-                print(f"Password: '{ip['password']}' \n-> Strength Score: {ip['score']} \n-> Status: {status}")
+                print(f"Password: '{ip['password']}'\n \n-> Strength Score: {ip['score']} \n-> Status: {status}")
+
+                if ip['issues']:
+                    print("="*80)
+                    print(f"Issues with Password: {ip['password']}: \n")
+                    for i, issue in enumerate(ip['issues'], 1):
+                        print("->" + issue)
+                print("="*80)
+
                 if status == "Breached":
                     print(f"-> Breach Count: {ip['breach_count']}")
                     print(f"{status} Recommendation: CHANGE PASSWORD AS SOON AS POSSIBLE.")
                 print("=" * 80)
 
-
+            #End of Password Inspection
+            print(" " * 25 + "END OF PASSWORD INSPECTION\n"
+                             "      Privacy: K-anonymity and no passwords are logged.")
+            print("=" * 80)
 
     # *** SINGLE PASSWORD / INTERACTIVE MODE ***
     else:
