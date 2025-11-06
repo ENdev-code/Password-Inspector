@@ -18,6 +18,7 @@ Password Inspector is an open-source, modular CLI tool designed and created fro 
 **GitHub**: [@ENdev-code](https://github.com/ENdev-code)  
 **License**: MIT  
 **Created**: November 2025
+
 **Current Version**: `v1.3`
 ---
 
