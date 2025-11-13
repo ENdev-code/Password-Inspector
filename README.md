@@ -103,6 +103,7 @@ pip install -r requirements.txt
 Requirements:
 - Python 3.13+
 - requests (For HIBP API)
+- Internet connection (for HIBP request)
 
 ---
 
