@@ -22,6 +22,7 @@ def checkStrength(password: str) -> Dict[str, object]:
         The entropy judges the estimated difficulty for a password to be cracked (in bits) and is expressed as a measure of randomness/uncertainty.
         Breaks the password into patterns, calculates the number of guesses per pattern and figures out how many guesses the whole password would take.
         ** Uses zxcvbn
+
     Args*
         password - string
 
@@ -44,7 +45,7 @@ def checkStrength(password: str) -> Dict[str, object]:
     #2. Number of characters (12+)
     if len(password) < 12:
         score -= 10
-        issues.append("Has less than 12 characters, not bad but the more the merrier.")
+        issues.append("Has less than 12 characters. Recommended if MFA not activated.")
 
     #3. Number of characters (16+)
     if len(password) < 16:

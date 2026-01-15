@@ -70,13 +70,13 @@ def passwordInspector(password:str):
         print("All checks passed!")
     print("=" * 80)
     status = f"\n\n {result['score']}% Strong!" if result['strong'] else "Areas to fix shown above."
-    print(f"Password is {status} by Password Inspector standard.")
+    print(f"\nPassword is {status} by Password Inspector standard.")
     print("="*80)
 
     #2. Breach Check
     print("                              2. BREACH CHECK...")
     print("=" * 80)
-    pwned, count = checkBreached(check_password)
+    pwned, count = checkBreached(password)
 
     if pwned:
         print(f"Password {password} has been breached.\n"

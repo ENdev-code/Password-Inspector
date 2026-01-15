@@ -13,10 +13,10 @@ import sys
 #Modules to use
 from breach_checker import checkBreached
 from strength_checker import checkStrength
-from password_tester import printGreeting
+from password_tester import printGreeting, passwordInspector
 
 #Current Password Inspector version: 1.2
-__version__ = 1.2
+__version__ = 1.3
 
 #Function that Inspects Passwords at CLI level
 def inspectPassword(password: str) -> dict:
@@ -27,6 +27,9 @@ def inspectPassword(password: str) -> dict:
         "score": strength_check['score'],
         "issues": strength_check['issues'],
         "strong": strength_check['strong'],
+        "entropy_score": strength_check['entropy_score'],
+        "guesses": strength_check['guesses'],
+        "crack_time": strength_check['crack_time'],
         "pwned": pwned,
         "breach_count": breach_count or 0
     }
@@ -57,7 +60,12 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        help=f"Password Inspector version {__version__}"
+        help=f"Name: Password Inspector\n"
+             f"Version: {__version__}\n"
+             f"Home Page: https://github.com/ENdev-code/Password-Inspector\n"
+             f"Author: Emmanuel Nkhoma\n"
+             f"Author-email: emmanuelmnkhoma@gmail\n"
+             f"License: MIT"
     )
 
     #1.4 Argument for creating reports, suitable for security audits
@@ -122,6 +130,9 @@ def main():
                 "password",
                 "score",
                 "strong",
+                "entropy_score",
+                "crack_time",
+                "guesses",
                 "pwned",
                 "breach_count",
                 "issues"
@@ -148,6 +159,9 @@ def main():
                     ip['password'],
                     ip['score'],
                     strong,
+                    ip['entropy_score'],
+                    ip['crack_time'],
+                    ip['guesses'],
                     breached,
                     breach_count,
                     issues
@@ -156,7 +170,7 @@ def main():
             print("\n CSV Written to STDOUT")
             print("Privacy: K-anonymity and no passwords are logged.")
 
-        #5.1. CSV hasn't been toggled but report has been toggled
+        #5.1. Report has been toggled
         elif args.report:
             # *** HUMAN READABLE AUDIT REPORT ***
             print("=" * 80)
@@ -166,12 +180,15 @@ def main():
             for ip in inspected_passwords:
                 password = ip['password']
                 score = ip['score']
-                strong = "Strong" if not ip['pwned'] and ip['score'] >= 80 else "Weak Password"
+                strong = "Strong" if not ip['pwned'] and ip['score'] >= 60 else "Weak Password"
                 status = "Breached" if ip['pwned'] else "Safe: No Breach Found"
                 breach_count = ip['breach_count'] if ip['pwned'] else 0
 
                 print(f"\nINSPECTED PASSWORD: {password} \n\n"
                       f"SECURITY SCORE:         {score} \n"
+                      f"ENTROPY SCORE(zxcvbn):  {ip['entropy_score']}\n"
+                      f"NUMBER OF GUESSES:      {ip['guesses']}\n"
+                      f"CRACK TIME:             {ip['crack_time']}\n"
                       f"BREACH STATUS:          {status} \n"
                       f"BREACH COUNT:           {breach_count}\n"
                       f"STRENGTH LEVEL:         {strong}\n")
@@ -232,30 +249,10 @@ def main():
             print("No password provided. Exiting...")
             return
 
-        inspected_pw = inspectPassword(pw_to_inspect)
+        inspected_pw = passwordInspector(pw_to_inspect)
         print("=" * 80)
 
-        #The entered password
-        print(f"Password: {pw_to_inspect} -> Inspection Details Below")
-        print(f"Strength Score: {inspected_pw['score']}/100")
-        print("=" * 80)
 
-        #Issues
-        if inspected_pw['issues']:
-            print("Noted the Following Issues that Require Attention: \n\n" + "\n\n" .join(inspected_pw['issues']))
-        else:
-            print("No issues found. Password meets all criteria.")
-        print("=" * 80)
-
-        #Breach Status
-        if inspected_pw['pwned']:
-            print(f"Password Breached! \nBreach Count: {inspected_pw['breach_count']}")
-        else:
-            print(f"No breaches found.")
-
-        print("=" * 80)
-        print("Privacy: K-anonymity and no passwords are logged.")
-        print("=" * 80)
 
 if __name__ == "__main__":
     main()
