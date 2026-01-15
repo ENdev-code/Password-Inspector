@@ -11,9 +11,9 @@
 
 **A privacy-first Python tool for password strength analysis and breach detection via Have I Been Pwned (HIBP) API.**
 
-> **No logs. No storage. Just Clarity.**
+> **No logs. No storage. Just Clarity and Privacy.**
 
-Password Inspector is an open-source, modular CLI tool designed and created for cybersecurity enthusiasts, auditors, developers and corporate IT teams. It evaluates password strength based on best practices and checks if passwords have been breached via k-anonymity ensuring that no passwords are logged nor are they sent in plaintext. Built cleanly, with maintainable code and documentation under MIT License.
+Password Inspector is an open-source, modular CLI tool designed and created for cybersecurity enthusiasts, auditors, developers and corporate IT teams. It evaluates password strength based on password length, entropy & whether or not there are recurring characters and then checks public databases if passwords have been breached via k-anonymity ensuring that no passwords are logged nor are they sent in plaintext. Built cleanly, with maintainable code and documentation under MIT License.
 
 
 **Author**: Emmanuel Nkhoma  
