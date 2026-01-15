@@ -38,7 +38,7 @@ def checkStrength(password: str) -> Dict[str, object]:
     #1. Number of Characters (8+) - len()
     MIN_CHAR_AMOUNT = 8
     if len(password) < MIN_CHAR_AMOUNT:
-        score -= 5
+        score -= 10
         issues.append("Has less than 8 characters: Too short.")
 
     #2. Number of characters (12+)
@@ -53,8 +53,8 @@ def checkStrength(password: str) -> Dict[str, object]:
 
     #4. Number of characters (20+)
     if len(password) < 20:
-        score -= 20
-        issues.append("Has less than 20 characters, not bad but the more the merrier.")
+        score -= 15
+        issues.append("Has less than 20 characters.")
 
     #5. No Recurring Characters
     if re.search(r'(.)\1{2,}', password):
@@ -66,42 +66,45 @@ def checkStrength(password: str) -> Dict[str, object]:
     entropy_result = zxcvbn(password, user_inputs=user_inputs) #returns a dict
 
     guesses = entropy_result['guesses'] #number of guesses 2^entropy_bits
-    entropy_bits = math.log2(guesses) if guesses > 0 else 0
-    crack_time = entropy_result['crack_times_display']['offline_fast_hashing_1e10_per_second']
+    entropy_bits = (2**math.log2(guesses)) if guesses > 0 else 0
+    crack_time = entropy_result['crack_times_display']['offline_slow_hashing_1e4_per_second']
     #Score from 0-4 based on number of guesses. [0:<10^2, 1: <10^4, 2: <10^6, 3: <10^8, 4: >= 10^10]
     entropy_score = entropy_result['score']
     feedback = entropy_result.get('feedback', {}).get('suggestions', [])
-    #for suggestion in suggestions:
-     #   issues.append(f"Suggestion: {suggestion.strip()}")
 
     warning = entropy_result.get('feedback', {}).get('warning', '')
     if warning:
         issues.append(f"Warning: {warning.strip()}")
 
     if entropy_score:
-        if entropy_score >= 0:
+        score -= 40
+        if entropy_score == 0:
             score += 2
-        if entropy_score >= 1:
-            score += 4
-        if entropy_score >= 2:
+        if entropy_score == 1:
             score += 6
-        if entropy_score >= 3:
+        if entropy_score == 2:
             score += 12
+        if entropy_score == 3:
+            score += 24
         if entropy_score == 4:
-            score += 16
+            score += 40
+
 
     #7. Evaluate Password Strength Status
     final_score = max(0, score)
-    strong: bool = final_score >= 38
+    strong: bool = final_score >= 60
 
-    if not strong and final_score >= 50:
+    if not strong and final_score >= 20 and entropy_score < 3:
         issues.append(f"Password strength is low [Score {final_score}%]: Consider editing or changing password.")
-    elif not strong and (final_score < 50 and final_score >=0):
+    elif not strong and (final_score < 20 and final_score >=0):
         issues.append(f"Password is poor [Score: {final_score}%]: Change password.")
 
     #8. Dict output
     return {
         "score": final_score,
         "issues": issues,
-        "strong": strong
+        "strong": strong,
+        "crack_time": crack_time,
+        "guesses": entropy_bits,
+        "entropy_score": entropy_score
     }

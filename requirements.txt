@@ -4,3 +4,4 @@
 # Core dependencies for strength + breach checking
 
 requests>=2.25.1
+zxcvbn>4.5.0

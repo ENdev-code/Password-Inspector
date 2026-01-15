@@ -52,19 +52,28 @@ Below is a description of the features Password Inspector can provide for you.
 ## Scoring Criteria (100 points total):
 Below is the scoring criteria for passwords that Password Inspector will use 
 
-| Criteria | Points |
-|----------|--------|
-| 8+ characters | 20 |
-| Uppercase letters | 10 |
-| Lowercase letters | 10 |
-| Symbol(s) (at least one) | 20 | 
-| Digit(s) (at least one) | 20 | 
-| No 3+ repeating chars | 20 |
+| Basic Criteria | Points |
+|-----|----|
+| 8+ characters | 5  |
+| 12+ characters | 10 |
+| 16+ characters | 15 |
+| 20+ characters | 20 | 
+| No 3+ repeating chars | 10 |
+
+> An entropy check to determine how easily a password can be cracked via zxcvbn Total points to contribute = 40.
+
+| Entropy Score (zxcvbn) | Custom Score |
+|------------------------|--------------|
+| 0                      | 2            |
+| 1                      | 6            |
+| 2                      | 12           |
+| 3                      | 24           |
+| 4                      | 40           |
 
 ### Strength Levels/Thresholds
-- **Strong:**              ≥ 80 points 
-- **Low:**                 50-79 points (Change password or consider editing)
-- **Strength:**            <50 points (Change password ASAP)
+- **Strong:**              ≥ 60 points 
+- **Moderate:**            =20-59 points (Consider editing)
+- **Low:**                 <20 points (Change password ASAP)
 
 ---
 
@@ -76,7 +85,7 @@ Below is a comprehensive summary of use cases for Password Inspector
 | Personal Use              | Check your own passwords for strength level and breach status before using them or after use for evaluation.               |
 | Corporate Security Audits | Batch processing employee or system passwords for compliance reports.                                                      |
 | Penetration Testing       | Analyse leaked wordlists or default passwords during red team exercises (e.g., analysing common patterns used by targets). |
-| Compliance Insurance      | Proves password policy enforcement with frameworks like NIST, ISO27001 e.t.c.                                              |
+| Compliance Insurance      | Proves password policy enforcement with frameworks like NIST & OWASP.                                                      |
 | Educational Tool          | Demonstrate and prove password best practices in cybersecurity training.                                                   |
 | Developer Integration     | Modules can be imported and integrated with custom apps (e.g., password managers).                                         |
 
