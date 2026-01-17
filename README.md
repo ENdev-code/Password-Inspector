@@ -71,9 +71,11 @@ Below is the scoring criteria for passwords that Password Inspector will use
 | 4                      | 40           |
 
 ### Strength Levels/Thresholds
-- **Strong:**              ≥ 60 points 
-- **Moderate:**            =20-59 points (Consider editing)
-- **Low:**                 <20 points (Change password ASAP)
+- **Very Strong:**         ≥ 85 points 
+- **Strong:**              ≥ 65 points 
+- **Fair:**                ≥ 45 points (Consider editing)
+- **Weak:**                ≥ 20 points (Strongly recommend changing password)
+- **Very Weak:**           < 20 points (Change password.)
 
 ---
 
