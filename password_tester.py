@@ -65,7 +65,7 @@ def passwordInspector(password:str):
     print(f"\nNumber of Guesses: {result['guesses']}")
     print("=" * 80)
     if result['issues']:
-        print("Noted the following issues and provided their fixes: \n\n " + " \n\n ".join(result['issues']))
+        print("Noted the Following Issues and Provided Advice: \n\n " + " \n\n ".join(result['issues']))
     else:
         print("All checks passed!")
     print("=" * 80)

@@ -29,6 +29,7 @@ def inspectPassword(password: str) -> dict:
         "strong": strength_check['strong'],
         "entropy_score": strength_check['entropy_score'],
         "guesses": strength_check['guesses'],
+        "entropy_bits": strength_check['entropy_bits'],
         "crack_time": strength_check['crack_time'],
         "pwned": pwned,
         "breach_count": breach_count or 0
@@ -133,6 +134,7 @@ def main():
                 "entropy_score",
                 "crack_time",
                 "guesses",
+                "entropy_bits",
                 "pwned",
                 "breach_count",
                 "issues"
@@ -162,6 +164,7 @@ def main():
                     ip['entropy_score'],
                     ip['crack_time'],
                     ip['guesses'],
+                    ip['entropy_bits'],
                     breached,
                     breach_count,
                     issues
@@ -180,32 +183,33 @@ def main():
             for ip in inspected_passwords:
                 password = ip['password']
                 score = ip['score']
-                strong = "Strong" if not ip['pwned'] and ip['score'] >= 60 else "Weak Password"
+                strong = ip['strong']
                 status = "Breached" if ip['pwned'] else "Safe: No Breach Found"
                 breach_count = ip['breach_count'] if ip['pwned'] else 0
 
                 print(f"\nINSPECTED PASSWORD: {password} \n\n"
-                      f"SECURITY SCORE:         {score} \n"
-                      f"ENTROPY SCORE(zxcvbn):  {ip['entropy_score']}\n"
-                      f"NUMBER OF GUESSES:      {ip['guesses']}\n"
-                      f"CRACK TIME:             {ip['crack_time']}\n"
-                      f"BREACH STATUS:          {status} \n"
-                      f"BREACH COUNT:           {breach_count}\n"
-                      f"STRENGTH LEVEL:         {strong}\n")
+                      f"SECURITY SCORE:             {score} \n"
+                      f"ENTROPY SCORE(zxcvbn):      {ip['entropy_score']}\n"
+                      f"NUMBER OF GUESSES:          {ip['guesses']}\n"
+                      f"NUMBER OF BITS (ESTIMATE):  {ip['entropy_bits']}\n"
+                      f"CRACK TIME:                 {ip['crack_time']}\n"
+                      f"BREACH STATUS:              {status} \n"
+                      f"BREACH COUNT:               {breach_count}\n"
+                      f"STRENGTH LEVEL:             {strong}\n")
 
 
                 if ip['issues']:
-                    print("\nPASSWORD ISSUES:\n")
+                    print("\nPASSWORD ISSUES & ADVICE:\n")
                     for issue in ip['issues']:
                         print(f" -> {issue}")
                     if ip['pwned']:
-                        print(f" -> Breached {breach_count} times: CHANGE PASSWORD ASAP")
+                        print(f" -> Breached {breach_count} times: CHANGE PASSWORD IMMEDIATELY!")
                     print("\n")
                     print("="*80)
                 else:
                     if ip['pwned']:
                         print("\nPASSWORD ISSUES:\n")
-                        print(f" -> Breached {breach_count} times: CHANGE PASSWORD ASAP")
+                        print(f" -> Breached {breach_count} times: CHANGE PASSWORD IMMEDIATELY.")
                         print("\n ** Password has no issues (Based on Password Inspecting Criteria)\n")
                     else:
                         print("\n ** Password has no issues (Based on Password Inspecting Criteria)\n")
