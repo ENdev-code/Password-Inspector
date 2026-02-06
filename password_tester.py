@@ -69,7 +69,7 @@ def passwordInspector(password:str):
     else:
         print("All checks passed!")
     print("=" * 80)
-    status = f"\n\n {result['score']}% Strong!" if result['strong'] else "Areas to fix shown above."
+    status = f"{result['score']}% strong [{result['strong']}]" if result['strong'] else "Areas to fix shown above."
     print(f"\nPassword is {status} by Password Inspector standard.")
     print("="*80)
 

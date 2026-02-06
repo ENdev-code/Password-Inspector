@@ -112,7 +112,7 @@ def main():
             inspected_pw = inspectPassword(pw)
             inspected_passwords.append(inspected_pw)
 
-            if not inspected_pw['strong']:
+            if inspected_pw['strong'] != "Very Strong" and inspected_pw['strong'] != "Strong" and inspected_pw['strong'] != "Fair":
                 weak_passwords += 1
             if inspected_pw['pwned']:
                 pwned_passwords += 1
