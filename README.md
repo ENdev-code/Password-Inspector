@@ -103,7 +103,8 @@ cd Password-Inspector
 **Step 2: Create Virtual Environment**
 ```bash
 python -m venv venv
-source .venv/bin/activate #Windows: .venv\Scripts\activate
+source .venv/bin/activate 
+#On Windows: & .\venv\Scripts\Activate.ps1
 ```
 
 **Step 3: Install Dependencies**
@@ -170,4 +171,4 @@ python password_inspector_cli.py yourwordlist.txt --csv > report.csv
 --- 
 
 > Do you really know how strong your passwords are? Find out with Password Inspector.  
->~ Emmanuel Nkhoma
+>~ Emmanuel Nkhoma AKA ENdev-code

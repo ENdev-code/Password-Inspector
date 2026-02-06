@@ -15,7 +15,7 @@ from breach_checker import checkBreached
 from strength_checker import checkStrength
 from password_tester import printGreeting, passwordInspector
 
-#Current Password Inspector version: 1.2
+#Current Password Inspector version: 1.3
 __version__ = 1.3
 
 #Function that Inspects Passwords at CLI level
@@ -40,7 +40,8 @@ def main():
     #1. Create parsing instance
     parser = argparse.ArgumentParser(
         description="A privacy-first Python tool for password strength analysis and breach detection.",
-        epilog="Privacy: K-anonymity and no passwords are logged."
+        formatter_class=argparse.RawTextHelpFormatter, #helps format version message
+        epilog="Privacy: K-anonymity and No Passwords are Logged."
     )
 
     #1.1. Create argument for parsing: Input - either a password or a path to a wordlist
@@ -54,26 +55,30 @@ def main():
     parser.add_argument(
         "--csv",
         action="store_true",
-        help="Generate CSV file with Password Inspector details about inspected passwords."
+        help="Generates CSV file with Password Inspector details about inspected passwords."
     )
 
     #1.3 Create an argument to output the current version of Password Inspector
     parser.add_argument(
         "--version",
         action="version",
-        help=f"Name: Password Inspector\n"
-             f"Version: {__version__}\n"
-             f"Home Page: https://github.com/ENdev-code/Password-Inspector\n"
-             f"Author: Emmanuel Nkhoma\n"
-             f"Author-email: emmanuelmnkhoma@gmail\n"
-             f"License: MIT"
+        version=(
+            f"Name: Password Inspector\n"
+            f"Summary: \n"
+            f"Version: {__version__}\n"
+            f"Home Page: https://github.com/ENdev-code/Password-Inspector\n"
+            f"Author: Emmanuel Nkhoma\n"
+            f"Author-email: emmanuelmnkhoma@gmail\n"
+            f"License: MIT"
+        ),
+        help="Shows the current version of Password Inspector."
     )
 
     #1.4 Argument for creating reports, suitable for security audits
     parser.add_argument(
         "--report",
         action="store_true",
-        help="Generate Password Inspector report for inspected passwords."
+        help="Generates Password Inspector report for inspected passwords."
     )
 
     #2. Parse the arguments in Parser into a variable: args
