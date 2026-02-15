@@ -77,6 +77,7 @@ Below is the scoring criteria for passwords that Password Inspector will use
 - **Weak:**                ≥ 20 points (Strongly recommend changing password)
 - **Very Weak:**           < 20 points (Change password.)
 
+If breached, CHANGE PASSWORD IMMEDIATELY.
 ---
 
 ## Use Cases
