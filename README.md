@@ -101,7 +101,7 @@ git clone https:/github.com/ENdev-code/Password-Inspector.git
 cd Password-Inspector
 ```
 
-**Scenario A - Step 2: Easy Route (.bat file)
+**Scenario A - Step 2: Easy Route (.bat file)**
 Open the folder where Password Inspector is and double click
 
 **Scenario B - Step 2: Create Virtual Environment**
