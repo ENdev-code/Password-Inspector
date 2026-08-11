@@ -27,15 +27,16 @@ def printGreeting():
           "         4. 20+ Characters = 15 points \n"
           "         5. No 3+ recurring characters [e.g. 1111, aaa] = 10 points\n"
           "         6. Entropy Score Points (zxcvbn: 0-4) = 40 points \n\n"
-          "     This is my grading system relative to the entropy score:\n"
-          "     KEY: Entropy Score = Password Inspector Points\n\n"
+          "This is my grading system relative to the entropy score:\n"
+          "KEY: Entropy Score = Password Inspector Points\n\n"
           "         a. 0 = 2\n"
           "         b. 1 = 6\n"
           "         c. 2 = 12\n"
           "         d. 3 = 24\n"
           "         e. 4 = 40\n"       
           "           [total Score: 100 points]")
-    print("=" * 80)
+    print("=" * 80 + "\n")
+
 
 def passwordInspector(password:str):
     """

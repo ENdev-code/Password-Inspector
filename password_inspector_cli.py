@@ -1,5 +1,5 @@
 """
-Password Inspector v1.3
+Password Inspector v1.4
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """
@@ -8,6 +8,9 @@ MIT License - See LICENSE file
 import argparse
 from pathlib import Path
 import csv
+import tkinter as tk
+from tkinter import filedialog
+import getpass
 import sys
 
 #Modules to use
@@ -16,7 +19,7 @@ from strength_checker import checkStrength
 from password_tester import printGreeting, passwordInspector
 
 #Current Password Inspector version: 1.3
-__version__ = 1.3
+__version__ = 1.4
 
 #Function that Inspects Passwords at CLI level
 def inspectPassword(password: str) -> dict:
@@ -34,6 +37,22 @@ def inspectPassword(password: str) -> dict:
         "pwned": pwned,
         "breach_count": breach_count or 0
     }
+
+#Function that handles opening file explorer when needed
+def dora() -> str | None:
+    """Opens file explorer to allow user to search for .txt file to inspect via GUI window."""
+    root = tk.Tk()
+    root.withdraw() #closes the empty tkinter window
+    root.attributes('-topmost', True) #Makes the file explorer window the highest priority
+    file_path = filedialog.askopenfilename(
+        title="Open File(.txt) to Inspect.",
+        filetypes=[
+            ("Text Files", "*.txt"),
+            ("All Files", "*.*")
+        ]
+    )
+    root.destroy()#close the window and remove it from memory
+    return file_path if file_path else None
 
 #Actual CLI Capability is added here
 def main():
@@ -84,6 +103,11 @@ def main():
     #2. Parse the arguments in Parser into a variable: args
     args = parser.parse_args()
 
+    # Making sure the main menu shows
+    if args.input is None and not args.report and not args.csv:
+        show_menu()
+        return
+
     #3. Inspection
     # *** BATCH MODE: if path to wordlist.txt is provided ***
     if args.input and Path(args.input).exists():
@@ -100,8 +124,8 @@ def main():
             print(f"No passwords in file: '{path.name}'")
             return
 
-        printGreeting()
         print(f"Loading {len(passwords)} passwords from: '{path.name}' ... \n")
+
 
         #3.3. Iterate through passwords array and process passwords
         inspected_passwords = []
@@ -117,9 +141,9 @@ def main():
             if inspected_pw['pwned']:
                 pwned_passwords += 1
 
-            #3.4. Live Progress Updates
+            # 3.4. Live Progress Updates
             progress: float = (i / total_passwords) * 100
-            print(f"Progress: {progress:.2f}% ({i}/{total_passwords}) passwords inspected ...", end="\r")
+            print(f"Progress: {progress:.2f}% ({i}/{total_passwords}) passwords inspected ...", end="\r",flush=True)
 
         #Processing Complete
         #4. Output
@@ -127,7 +151,7 @@ def main():
         print(f"\n                  BATCH PASSWORD INSPECTION COMPLETE! \n\n"
               f"Weak Passwords (%): {(weak_passwords/len(inspected_passwords)) *100:.2f}% [{weak_passwords:,}/{len(inspected_passwords)}] \n"
               f"Breached Passwords (%): {(pwned_passwords/len(inspected_passwords))*100:.2f}% [{pwned_passwords:,}/{len(inspected_passwords)}] \n")
-        print("=" * 80)
+        print("=" * 80 + "\n")
 
         #5. Check if CSV has been toggled, if so, create and output CSV file for batch password inspection
         if args.csv:
@@ -224,7 +248,7 @@ def main():
             #End of report
             print(" " * 25 + "END OF PASSWORD INSPECTOR REPORT\n\n"
                              "      Privacy: K-anonymity and no passwords are logged.")
-            print("=" * 80)
+            print("=" * 80 + "\n")
 
         #5.2. Both CSV and report have not been toggled
         else:
@@ -248,19 +272,89 @@ def main():
             #End of Password Inspection
             print(" " * 25 + "END OF PASSWORD INSPECTION\n"
                              "      Privacy: K-anonymity and no passwords are logged.")
-            print("=" * 80)
+            print("=" * 80 + "\n")
 
     # *** SINGLE PASSWORD / INTERACTIVE MODE ***
     else:
-        printGreeting()
         pw_to_inspect = args.input or input("Enter Password to Inspect: ")
         if not pw_to_inspect:
             print("No password provided. Exiting...")
             return
 
         inspected_pw = passwordInspector(pw_to_inspect)
-        print("=" * 80)
+        print("=" * 80 + "\n")
 
+def show_menu():
+    """This function will show the greeting menu and will abstract the logic of the underlying processes"""
+    inspecting = True
+    while inspecting:
+        print("--" * 40)
+        print("                          PASSWORD INSPECTOR")
+        print("--" * 40)
+        print("What would you like to do?\n"
+              " [0] How I work.\n"
+              " [1] Single Password Check.\n"
+              " [2] Password Batch Check (Report).\n"
+              " [3] Password Batch Check (CSV).\n"
+              " [4] Version.\n"
+              " [5] Help.\n"
+              " [6] Exit.")
+        print("--" * 40 + "\n")
+
+        choice = input("Enter Your Choice: ")
+
+        #What to do when the user chooses an option
+        #if they want to know more about Password Inspector
+        if choice == "0":
+            printGreeting()
+        #if they want to check one password
+        elif choice == "1":
+            password = getpass.getpass("Enter Password to Inspect(input is hidden): ")
+            if password:
+                original_argv = sys.argv[:] #Snapshot of current arguments
+                sys.argv = [sys.argv[0], password] #simulation of actual command
+                try:
+                    main() #send arguments to the main function
+                finally:
+                    sys.argv = original_argv #clearing memory
+        #if they want to check multiple passwords in batchmode::report or ::csv
+        elif choice == "2" or choice == "3":
+            file_path = dora()
+            mode = None
+            if choice =="2":
+                mode = "--report"
+            elif choice =="3":
+                mode = "--csv"
+
+            if file_path:
+                original_argv = sys.argv[:]
+                sys.argv = [sys.argv[0], file_path, mode]
+                try:
+                    main()
+                finally:
+                    sys.argv = original_argv
+        #if they want to see what version Password Inspector is currently running at
+        elif choice == "4":
+            original_argv = sys.argv[:]
+            sys.argv = [sys.argv[0], "--version"]
+            try:
+                main()
+            finally:
+                sys.argv = original_argv
+        #if they want to see what else can be done with Password Inspector
+        elif choice == "5":
+            original_argv = sys.argv[:]
+            sys.argv = [sys.argv[0], "--help"]
+            try:
+                main()
+            finally:
+                sys.argv = original_argv
+        #They want to exit
+        elif choice == "6":
+            print("Thank you for using Password Inspector. Goodbye & Stay Safe!")
+            inspecting = False
+        else:
+            print("Invalid choice. Please make sure your choice is any number from 0 to 6.")
 
 
 if __name__ == "__main__":

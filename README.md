@@ -101,14 +101,22 @@ git clone https:/github.com/ENdev-code/Password-Inspector.git
 cd Password-Inspector
 ```
 
-**Step 2: Create Virtual Environment**
+**Scenario A - Step 2: Easy Route (.bat file)
+Open the folder where Password Inspector is and double click
+
+**Scenario B - Step 2: Create Virtual Environment**
 ```bash
 python -m venv venv
 source .venv/bin/activate 
 #On Windows: & .\venv\Scripts\Activate.ps1
 ```
 
-**Step 3: Install Dependencies**
+**Step 3: Run Script**
+```bash
+python password_inspector_cli.py
+```
+
+**Step 4: Install Dependencies**
 ```bash
 pip install -r requirements.txt
 ```
