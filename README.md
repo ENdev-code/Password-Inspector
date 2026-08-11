@@ -102,7 +102,7 @@ cd Password-Inspector
 ```
 
 **Scenario A - Step 2: Easy Route (.bat file)**
-- Open the folder where Password Inspector is and double-click the .bat file 
+- Open the folder where Password Inspector is and double-click the .bat file called run_PI.bat
 
 **Scenario B - Step 2: Create Virtual Environment**
 ```bash
