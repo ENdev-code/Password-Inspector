@@ -2,7 +2,7 @@
 
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
 [![CLI Tool](https://img.shields.io/badge/tool-CLI-red)](#how-to-use)
-[![Version: v2.13](https://img.shields.io/badge/version-v1.3-success)](https://github.com/ENdev-code/Password-Inspector/releases)
+[![Version: v2.13](https://img.shields.io/badge/version-v2.13-success)](https://github.com/ENdev-code/Password-Inspector/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security: Privacy-First](https://img.shields.io/badge/security-privacy--first-green)](#privacy--security)
 [![HIBP k-anonymity](https://img.shields.io/badge/HIBP-k--anonymity-orange)](#features)
