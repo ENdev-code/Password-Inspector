@@ -1,5 +1,5 @@
 """
-Password Inspector v1.3
+Password Inspector v2.13
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """
@@ -19,9 +19,11 @@ def checkStrength(password: str) -> Dict[str, object]:
         b. no recurring 3 characters i.e. aaaa, 1111, e.t.c.
 
     Entropy:
-        The entropy judges the estimated difficulty for a password to be cracked (in bits) and is expressed as a measure of randomness/uncertainty.
-        Breaks the password into patterns, calculates the number of guesses per pattern and figures out how many guesses the whole password would take.
-        ** Uses zxcvbn
+        Entropy here is a measure of how guessable the password is based on multiple factors the password is matched against such as dictionary words
+        (English, common passwords, names, places, e.t.c), l33t substitutions of those dictionary words, repeats like aaa or xyzxyz, sequences like 1234 or abcd,
+        keyboard sequences like qwerty or zxcvbn and dates. The entropy score is a measure of how long or difficult it would be for a password cracker to guess a password and is calculated
+        by the total number of guesses each pattern would need to be cracked by an attacker assuming they took the easiest path.
+        ** Uses zxcvbn (https://github.com/dropbox/zxcvbn)
 
     Args*
         password - string
@@ -69,7 +71,8 @@ def checkStrength(password: str) -> Dict[str, object]:
 
     guesses = entropy_result['guesses'] #Minimum Number of Guesses to Crack Password
     entropy_bits = math.log2(guesses) if guesses > 0 else 0
-    crack_time = entropy_result['crack_times_display']['offline_slow_hashing_1e4_per_second']
+    #assuming attacker attempts password cracking online with no rate-limiting
+    crack_time = entropy_result['crack_times_display']['online_no_throttling_10_per_second']
 
     #Score from 0-4 based on number of guesses. [0:<10^2, 1: <10^4, 2: <10^6, 3: <10^8, 4: >= 10^10]
     entropy_score = entropy_result['score']

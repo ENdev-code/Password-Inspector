@@ -1,8 +1,8 @@
-# Password Inspector v1.3
+# Password Inspector v2.13
 
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
 [![CLI Tool](https://img.shields.io/badge/tool-CLI-red)](#how-to-use)
-[![Version: v1.3](https://img.shields.io/badge/version-v1.3-success)](https://github.com/ENdev-code/Password-Inspector/releases)
+[![Version: v2.13](https://img.shields.io/badge/version-v1.3-success)](https://github.com/ENdev-code/Password-Inspector/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security: Privacy-First](https://img.shields.io/badge/security-privacy--first-green)](#privacy--security)
 [![HIBP k-anonymity](https://img.shields.io/badge/HIBP-k--anonymity-orange)](#features)
@@ -20,7 +20,7 @@ Password Inspector is an open-source, modular CLI tool designed and created for 
 **GitHub**: [@ENdev-code](https://github.com/ENdev-code)  
 **License**: MIT  
 **Created**: November 2025  
-**Current Version**: `v1.3`
+**Current Version**: `v2.13`
 
 ---
 
@@ -85,7 +85,7 @@ Below is a comprehensive summary of use cases for Password Inspector
 
 | Use Case                  | Description                                                                                                                |
 |---------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| Personal Use              | Check your own passwords for strength level and breach status before using them or after use for evaluation.               |
+| Personal Use              | Check if your own passwords are strong and see if they have been breached or are still safe to use.                        |
 | Corporate Security Audits | Batch processing employee or system passwords for compliance reports.                                                      |
 | Penetration Testing       | Analyse leaked wordlists or default passwords during red team exercises (e.g., analysing common patterns used by targets). |
 | Compliance Insurance      | Proves password policy enforcement with frameworks like NIST & OWASP.                                                      |

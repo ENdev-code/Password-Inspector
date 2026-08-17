@@ -1,5 +1,5 @@
 """
-Password Inspector v1.4
+Password Inspector v2.13
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """
@@ -19,7 +19,7 @@ from strength_checker import checkStrength
 from password_tester import printGreeting, passwordInspector
 
 #Current Password Inspector version: 1.3
-__version__ = 1.4
+__version__ = 2.13
 
 #Function that Inspects Passwords at CLI level
 def inspectPassword(password: str) -> dict:
@@ -70,14 +70,14 @@ def main():
         help="Password or path to wordlist file of passwords to inspect"
     )
 
-    #1.2. Create a --csv argument to allow output pf CSV if toggled
+    #1.2. Create a --csv argument to allow output of CSV if toggled
     parser.add_argument(
         "--csv",
         action="store_true",
         help="Generates CSV file with Password Inspector details about inspected passwords."
     )
 
-    #1.3 Create an argument to output the current version of Password Inspector
+    #1.3 Argument to output the current version of Password Inspector
     parser.add_argument(
         "--version",
         action="version",
@@ -134,6 +134,7 @@ def main():
 
         for i, pw in enumerate(passwords, 1):
             inspected_pw = inspectPassword(pw)
+
             inspected_passwords.append(inspected_pw)
 
             if inspected_pw['strong'] != "Very Strong" and inspected_pw['strong'] != "Strong" and inspected_pw['strong'] != "Fair":
@@ -239,9 +240,8 @@ def main():
                     if ip['pwned']:
                         print("\nPASSWORD ISSUES:\n")
                         print(f" -> Breached {breach_count} times: CHANGE PASSWORD IMMEDIATELY.")
-                        print("\n ** Password has no issues (Based on Password Inspecting Criteria)\n")
                     else:
-                        print("\n ** Password has no issues (Based on Password Inspecting Criteria)\n")
+                        print("\n ** Password has no issues (Based on Password Inspector Criteria)\n")
 
                     print("="*80)
 

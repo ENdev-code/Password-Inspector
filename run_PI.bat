@@ -12,7 +12,8 @@ REM Setting terminal window title
 title Password Inspector - Setup
 
 echo ================================================================
-echo                       PASSWORD INSPECTOR
+echo                        PASSWORD INSPECTOR
+echo                              v2.13
 echo                     One-Click Setup ^& Launch
 echo ================================================================
 echo

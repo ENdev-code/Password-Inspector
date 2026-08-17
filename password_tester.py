@@ -1,5 +1,5 @@
 """
-Password Inspector v1.3
+Password Inspector v2.13
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """
@@ -14,26 +14,26 @@ def printGreeting():
     print("                          PASSWORD INSPECTOR")
     print("=" * 80)
     print("WHAT I DO: \n\n"
-          "     1. Receive a password as input \n"
-          "     2. Evaluate its strength and check if it has been breached \n"
-          "     3. Output results")
+          "     1. Receive a password or password.txt file as input \n"
+          "     2. Evaluate a password's strength and check if it has been breached \n"
+          "     3. Output neat results")
     print("=" * 80)
     print("                     PASSWORD INSPECTING CRITERIA")
     print("=" * 80)
     print("This is my grading system: \n\n"
-          "         1. 8+ Characters = 10 points \n"
-          "         2. 12+ Characters = 10 points \n"
-          "         3. 16+ Characters = 15 points \n"
-          "         4. 20+ Characters = 15 points \n"
-          "         5. No 3+ recurring characters [e.g. 1111, aaa] = 10 points\n"
-          "         6. Entropy Score Points (zxcvbn: 0-4) = 40 points \n\n"
-          "This is my grading system relative to the entropy score:\n"
+          "         1. 8+ Characters        = 10 points \n"
+          "         2. 12+ Characters       = 10 points \n"
+          "         3. 16+ Characters       = 15 points \n"
+          "         4. 20+ Characters       = 15 points \n"
+          "         5. No character repeats = 10 points\n"
+          "         6. Entropy Score Points = up to 40 points \n\n"
+          "This is my grading system relative to the entropy score\n(How guessable your password is for an attacker):\n"
           "KEY: Entropy Score = Password Inspector Points\n\n"
-          "         a. 0 = 2\n"
-          "         b. 1 = 6\n"
-          "         c. 2 = 12\n"
-          "         d. 3 = 24\n"
-          "         e. 4 = 40\n"       
+          "         a. 0 (too guessable)      = 2\n"
+          "         b. 1 (very guessable)     = 6\n"
+          "         c. 2 (somewhat guessable) = 12\n"
+          "         d. 3 (safely unguessable) = 24\n"
+          "         e. 4 (very unguessable)   = 40\n"       
           "           [total Score: 100 points]")
     print("=" * 80 + "\n")
 
