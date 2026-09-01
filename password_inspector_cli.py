@@ -12,6 +12,8 @@ import tkinter as tk
 from tkinter import filedialog
 import getpass
 import sys
+import os
+
 
 #Modules to use
 from breach_checker import checkBreached
@@ -53,6 +55,27 @@ def dora() -> str | None:
     )
     root.destroy()#close the window and remove it from memory
     return file_path if file_path else None
+
+
+def swiper():
+    """Clear the terminal screen in a mbava way."""
+    os.system("cls" if os.name == "nt" else "clear")
+
+
+
+
+def pause_and_clear():
+    input("\nPress Enter to return to the main menu...")
+    swiper()
+
+
+
+def pause_and_clear():
+    input("\nPress Enter to return to the main menu...")
+    swiper()
+
+
+
 
 #Actual CLI Capability is added here
 def main():
@@ -285,9 +308,15 @@ def main():
         print("=" * 80 + "\n")
 
 def show_menu():
+
     """This function will show the greeting menu and will abstract the logic of the underlying processes"""
+
+    """This function will show the greeting menu and abstract the underlying processes."""
+
+
     inspecting = True
     while inspecting:
+
         print("--" * 40)
         print("                          PASSWORD INSPECTOR")
         print("--" * 40)
@@ -325,30 +354,136 @@ def show_menu():
                 mode = "--report"
             elif choice =="3":
                 mode = "--csv"
+=======
+        # Clear the terminal before starting each new menu cycle
+        pause_and_clear()
 
-            if file_path:
+        print("--" * 40)
+        print("                          PASSWORD INSPECTOR")
+        print("--" * 40)
+        print("What would you like to do?\n"
+              " [0] How I work.\n"
+              " [1] Single Password Check.\n"
+              " [2] Password Batch Check (Report).\n"
+              " [3] Password Batch Check (CSV).\n"
+              " [4] Version.\n"
+              " [5] Help.\n"
+              " [6] Exit.")
+        print("--" * 40 + "\n")
+
+        choice = input("Enter Your Choice: ")
+
+        # How I work
+        if choice == "0":
+            printGreeting()
+            pause_and_clear()
+
+        # Single password check
+        elif choice == "1":
+
+        # Clear the terminal before starting each new menu cycle
+        pause_and_clear()
+
+        print("--" * 40)
+        print("                          PASSWORD INSPECTOR")
+        print("--" * 40)
+        print("What would you like to do?\n"
+              " [0] How I work.\n"
+              " [1] Single Password Check.\n"
+              " [2] Password Batch Check (Report).\n"
+              " [3] Password Batch Check (CSV).\n"
+              " [4] Version.\n"
+              " [5] Help.\n"
+              " [6] Exit.")
+        print("--" * 40 + "\n")
+
+        choice = input("Enter Your Choice: ")
+
+        # How I work
+        if choice == "0":
+            printGreeting()
+            pause_and_clear()
+
+        # Single password check
+        elif choice == "1":
+>>>>>>> Stashed changes
+            password = getpass.getpass(
+                "Enter Password to Inspect(input is hidden): "
+            )
+
+            if password:
                 original_argv = sys.argv[:]
-                sys.argv = [sys.argv[0], file_path, mode]
+                sys.argv = [sys.argv[0], password]
+
                 try:
                     main()
                 finally:
                     sys.argv = original_argv
+
+        # Batch mode
+        elif choice == "2" or choice == "3":
+            file_path = dora()
+            mode = None
+
+            if choice == "2":
+                mode = "--report"
+                pause_and_clear()
+            elif choice == "3":
+                mode = "--csv"
+                pause_and_clear()
+
+            if file_path:
+                original_argv = sys.argv[:]
+                sys.argv = [sys.argv[0], file_path, mode]
+
+                try:
+                    main()
+                finally:
+                    sys.argv = original_argv
+
         #if they want to see what version Password Inspector is currently running at
         elif choice == "4":
             original_argv = sys.argv[:]
             sys.argv = [sys.argv[0], "--version"]
+
+
+        # Version
+        elif choice == "4":
+            original_argv = sys.argv[:]
+            sys.argv = [sys.argv[0], "--version"]
+
+
+        # Version
+        elif choice == "4":
+            original_argv = sys.argv[:]
+            sys.argv = [sys.argv[0], "--version"]
+
             try:
                 main()
             finally:
                 sys.argv = original_argv
+
         #if they want to see what else can be done with Password Inspector
         elif choice == "5":
             original_argv = sys.argv[:]
             sys.argv = [sys.argv[0], "--help"]
+
+        # Help
+        elif choice == "5":
+            original_argv = sys.argv[:]
+            sys.argv = [sys.argv[0], "--help"]
+
+
+        # Help
+        elif choice == "5":
+            original_argv = sys.argv[:]
+            sys.argv = [sys.argv[0], "--help"]
+
             try:
                 main()
             finally:
                 sys.argv = original_argv
+
         #They want to exit
         elif choice == "6":
             print("Thank you for using Password Inspector. Goodbye & Stay Safe!")
@@ -356,6 +491,31 @@ def show_menu():
         else:
             print("Invalid choice. Please make sure your choice is any number from 0 to 6.")
 
+
+
+
+        # Exit
+        elif choice == "6":
+            print("Thank you for using Password Inspector. Goodbye & Stay Safe!")
+            inspecting = False
+            pause_and_clear()
+
+        # Invalid choice
+        else:
+
+
+        # Exit
+        elif choice == "6":
+            print("Thank you for using Password Inspector. Goodbye & Stay Safe!")
+            inspecting = False
+            pause_and_clear()
+
+        # Invalid choice
+        else:
+            print(
+                "Invalid choice. Please make sure your choice "
+                "is any number from 0 to 6."
+            )
 
 if __name__ == "__main__":
     main()
