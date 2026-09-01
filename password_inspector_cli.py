@@ -1,361 +1,979 @@
+1
 """
 Password Inspector v2.13
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """
 
-#dependencies to use
 import argparse
-from pathlib import Path
 import csv
-import tkinter as tk
-from tkinter import filedialog
 import getpass
 import sys
+import tkinter as tk
+from pathlib import Path
+from tkinter import filedialog
 
-#Modules to use
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+)
+from rich.table import Table
+from rich.text import Text
+
 from breach_checker import checkBreached
 from strength_checker import checkStrength
 from password_tester import printGreeting, passwordInspector
 
-#Current Password Inspector version: 1.3
-__version__ = 2.13
 
-#Function that Inspects Passwords at CLI level
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+
+__version__ = "2.13"
+
+console = Console()
+
+APP_NAME = "PASSWORD INSPECTOR"
+APP_DESCRIPTION = (
+    "Privacy-first password strength analysis and breach detection"
+)
+
+
+# ---------------------------------------------------------------------------
+# Styling
+# ---------------------------------------------------------------------------
+
+def print_banner() -> None:
+    """Display the main application banner."""
+
+    banner = Text()
+    banner.append("PASSWORD ", style="bold white")
+    banner.append("INSPECTOR", style="bold cyan")
+    banner.append(f"  v{__version__}", style="dim")
+
+    console.print()
+    console.print(
+        Panel(
+            banner,
+            subtitle="[dim]Security • Privacy • Analysis[/dim]",
+            border_style="cyan",
+            box=box.DOUBLE,
+            padding=(1, 4),
+        )
+    )
+
+
+def print_section(title: str) -> None:
+    """Display a section heading."""
+
+    console.print()
+    console.print(
+        Panel(
+            f"[bold cyan]{title}[/bold cyan]",
+            border_style="cyan",
+            box=box.ROUNDED,
+            padding=(0, 2),
+        )
+    )
+
+
+def print_success(message: str) -> None:
+    console.print(f"[bold green]✓[/bold green] {message}")
+
+
+def print_warning(message: str) -> None:
+    console.print(f"[bold yellow]![/bold yellow] {message}")
+
+
+def print_error(message: str) -> None:
+    console.print(f"[bold red]✗[/bold red] {message}")
+
+
+def print_privacy_notice() -> None:
+    console.print(
+        Panel(
+            "[bold green]Privacy:[/bold green] "
+            "K-anonymity is used and passwords are not logged.",
+            border_style="green",
+            box=box.ROUNDED,
+            padding=(0, 2),
+        )
+    )
+
+
+# ---------------------------------------------------------------------------
+# Password inspection
+# ---------------------------------------------------------------------------
+
 def inspectPassword(password: str) -> dict:
+    """Inspect a password and return all analysis results."""
+
     strength_check = checkStrength(password)
     pwned, breach_count = checkBreached(password)
+
     return {
         "password": password,
-        "score": strength_check['score'],
-        "issues": strength_check['issues'],
-        "strong": strength_check['strong'],
-        "entropy_score": strength_check['entropy_score'],
-        "guesses": strength_check['guesses'],
-        "entropy_bits": strength_check['entropy_bits'],
-        "crack_time": strength_check['crack_time'],
+        "score": strength_check["score"],
+        "issues": strength_check["issues"],
+        "strong": strength_check["strong"],
+        "entropy_score": strength_check["entropy_score"],
+        "guesses": strength_check["guesses"],
+        "entropy_bits": strength_check["entropy_bits"],
+        "crack_time": strength_check["crack_time"],
         "pwned": pwned,
-        "breach_count": breach_count or 0
+        "breach_count": breach_count or 0,
     }
 
-#Function that handles opening file explorer when needed
+
+# ---------------------------------------------------------------------------
+# File picker
+# ---------------------------------------------------------------------------
+
 def dora() -> str | None:
-    """Opens file explorer to allow user to search for .txt file to inspect via GUI window."""
+    """Open a file explorer to select a .txt wordlist."""
+
     root = tk.Tk()
-    root.withdraw() #closes the empty tkinter window
-    root.attributes('-topmost', True) #Makes the file explorer window the highest priority
+    root.withdraw()
+    root.attributes("-topmost", True)
+
     file_path = filedialog.askopenfilename(
-        title="Open File(.txt) to Inspect.",
+        title="Open File (.txt) to Inspect",
         filetypes=[
             ("Text Files", "*.txt"),
-            ("All Files", "*.*")
-        ]
+            ("All Files", "*.*"),
+        ],
     )
-    root.destroy()#close the window and remove it from memory
+
+    root.destroy()
+
     return file_path if file_path else None
 
-#Actual CLI Capability is added here
-def main():
-    #1. Create parsing instance
-    parser = argparse.ArgumentParser(
-        description="A privacy-first Python tool for password strength analysis and breach detection.",
-        formatter_class=argparse.RawTextHelpFormatter, #helps format version message
-        epilog="Privacy: K-anonymity and No Passwords are Logged."
+
+# ---------------------------------------------------------------------------
+# Result formatting
+# ---------------------------------------------------------------------------
+
+def strength_style(strength) -> str:
+    """Return Rich styling for a password strength level."""
+
+    value = str(strength).lower()
+
+    if "very strong" in value:
+        return f"[bold green]{strength}[/bold green]"
+
+    if value == "strong":
+        return f"[green]{strength}[/green]"
+
+    if value == "fair":
+        return f"[yellow]{strength}[/yellow]"
+
+    if "weak" in value:
+        return f"[red]{strength}[/red]"
+
+    return f"[dim]{strength}[/dim]"
+
+
+def breach_style(breached: bool) -> str:
+    """Return Rich styling for breach status."""
+
+    if breached:
+        return "[bold red]BREACHED[/bold red]"
+
+    return "[bold green]SAFE[/bold green]"
+
+
+def create_result_table(ip: dict) -> Table:
+    """Create a formatted password analysis table."""
+
+    table = Table(
+        show_header=False,
+        box=box.SIMPLE_HEAVY,
+        padding=(0, 2),
+        expand=True,
     )
 
-    #1.1. Create argument for parsing: Input - either a password or a path to a wordlist
+    table.add_column("Property", style="bold cyan", width=28)
+    table.add_column("Value")
+
+    status = breach_style(ip["pwned"])
+
+    table.add_row(
+        "Security Score",
+        f"[bold white]{ip['score']}[/bold white]",
+    )
+
+    table.add_row(
+        "Strength",
+        strength_style(ip["strong"]),
+    )
+
+    table.add_row(
+        "Entropy Score",
+        str(ip["entropy_score"]),
+    )
+
+    table.add_row(
+        "Entropy Bits",
+        f"{ip['entropy_bits']}",
+    )
+
+    table.add_row(
+        "Estimated Guesses",
+        f"{ip['guesses']:,}",
+    )
+
+    table.add_row(
+        "Estimated Crack Time",
+        str(ip["crack_time"]),
+    )
+
+    table.add_row(
+        "Breach Status",
+        status,
+    )
+
+    table.add_row(
+        "Breach Count",
+        f"{ip['breach_count']:,}",
+    )
+
+    return table
+
+
+def display_password_result(ip: dict) -> None:
+    """Display a single password result."""
+
+    # Never display the actual password in the report.
+    title = Text("PASSWORD ANALYSIS", style="bold white")
+
+    console.print(
+        Panel(
+            create_result_table(ip),
+            title=title,
+            border_style="cyan",
+            box=box.ROUNDED,
+            padding=(1, 2),
+        )
+    )
+
+    if ip["pwned"]:
+        console.print(
+            Panel(
+                "[bold red]This password has appeared in known breaches.[/bold red]\n"
+                "[red]Change it immediately and avoid reusing it elsewhere.[/red]",
+                title="[bold red]SECURITY WARNING[/bold red]",
+                border_style="red",
+                box=box.HEAVY,
+            )
+        )
+
+    if ip["issues"]:
+        issues_table = Table(
+            title="Password Issues & Advice",
+            box=box.ROUNDED,
+            border_style="yellow",
+            expand=True,
+        )
+
+        issues_table.add_column("#", style="bold yellow", width=5)
+        issues_table.add_column("Issue / Recommendation")
+
+        for index, issue in enumerate(ip["issues"], 1):
+            clean = issue.strip().lstrip("| ").strip()
+
+            if clean:
+                issues_table.add_row(
+                    str(index),
+                    clean,
+                )
+
+        console.print(issues_table)
+
+
+# ---------------------------------------------------------------------------
+# Batch mode
+# ---------------------------------------------------------------------------
+
+def inspect_batch(
+    passwords: list[str],
+) -> list[dict]:
+    """Inspect a list of passwords with a Rich progress bar."""
+
+    inspected_passwords = []
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[bold cyan]{task.description}"),
+        BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>6.2f}%"),
+        TextColumn("({task.completed}/{task.total})"),
+        TimeElapsedColumn(),
+        console=console,
+    ) as progress:
+
+        task = progress.add_task(
+            "Inspecting passwords...",
+            total=len(passwords),
+        )
+
+        for password in passwords:
+            inspected_pw = inspectPassword(password)
+            inspected_passwords.append(inspected_pw)
+
+            progress.advance(task)
+
+    return inspected_passwords
+
+
+def display_batch_summary(
+    inspected_passwords: list[dict],
+) -> tuple[int, int]:
+    """Display a clean summary of a batch inspection."""
+
+    total = len(inspected_passwords)
+
+    weak_passwords = sum(
+        1
+        for password in inspected_passwords
+        if password["strong"]
+        not in ("Very Strong", "Strong", "Fair")
+    )
+
+    pwned_passwords = sum(
+        1
+        for password in inspected_passwords
+        if password["pwned"]
+    )
+
+    weak_percentage = (weak_passwords / total) * 100
+    breached_percentage = (pwned_passwords / total) * 100
+
+    summary = Table(
+        title="Batch Inspection Summary",
+        box=box.DOUBLE,
+        border_style="cyan",
+        expand=True,
+    )
+
+    summary.add_column(
+        "Metric",
+        style="bold cyan",
+    )
+
+    summary.add_column(
+        "Count",
+        justify="right",
+    )
+
+    summary.add_column(
+        "Percentage",
+        justify="right",
+    )
+
+    summary.add_row(
+        "Passwords Inspected",
+        f"{total:,}",
+        "100%",
+    )
+
+    summary.add_row(
+        "Weak Passwords",
+        f"[yellow]{weak_passwords:,}[/yellow]",
+        f"[yellow]{weak_percentage:.2f}%[/yellow]",
+    )
+
+    summary.add_row(
+        "Breached Passwords",
+        f"[red]{pwned_passwords:,}[/red]",
+        f"[red]{breached_percentage:.2f}%[/red]",
+    )
+
+    console.print()
+    console.print(
+        Panel(
+            summary,
+            title="[bold cyan]BATCH PASSWORD INSPECTION COMPLETE[/bold cyan]",
+            border_style="cyan",
+            box=box.DOUBLE,
+            padding=(1, 2),
+        )
+    )
+
+    return weak_passwords, pwned_passwords
+
+
+# ---------------------------------------------------------------------------
+# CSV output
+# ---------------------------------------------------------------------------
+
+def output_csv(inspected_passwords: list[dict]) -> None:
+    """Output batch results as CSV."""
+
+    csv_writer = csv.writer(
+        sys.stdout,
+        lineterminator="\n",
+    )
+
+    csv_writer.writerow(
+        [
+            "password",
+            "score",
+            "strong",
+            "entropy_score",
+            "crack_time",
+            "guesses",
+            "entropy_bits",
+            "pwned",
+            "breach_count",
+            "issues",
+        ]
+    )
+
+    for ip in inspected_passwords:
+
+        strong = "Yes" if ip["strong"] else "No"
+        breached = "Yes" if ip["pwned"] else "No"
+
+        breach_count = (
+            ip["breach_count"]
+            if ip["pwned"]
+            else 0
+        )
+
+        if ip["issues"]:
+            clean_issues = []
+
+            for issue in ip["issues"]:
+                clean = issue.strip().lstrip("| ").strip()
+
+                if clean:
+                    clean_issues.append(clean)
+
+            issues = "\n".join(clean_issues)
+
+        else:
+            issues = "None"
+
+        csv_writer.writerow(
+            [
+                ip["password"],
+                ip["score"],
+                strong,
+                ip["entropy_score"],
+                ip["crack_time"],
+                ip["guesses"],
+                ip["entropy_bits"],
+                breached,
+                breach_count,
+                issues,
+            ]
+        )
+
+
+# ---------------------------------------------------------------------------
+# Human-readable report
+# ---------------------------------------------------------------------------
+
+def output_report(inspected_passwords: list[dict]) -> None:
+    """Display a human-readable security audit report."""
+
+    print_section("PASSWORD INSPECTOR REPORT")
+
+    for index, ip in enumerate(inspected_passwords, 1):
+
+        console.print(
+            f"\n[bold cyan]Password #{index}[/bold cyan]"
+        )
+
+        display_password_result(ip)
+
+    console.print()
+    print_privacy_notice()
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+def main():
+    """Main CLI entry point."""
+
+    parser = argparse.ArgumentParser(
+        description=APP_DESCRIPTION,
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog=(
+            "Privacy: K-anonymity and no passwords are logged."
+        ),
+    )
+
     parser.add_argument(
         "input",
         nargs="?",
-        help="Password or path to wordlist file of passwords to inspect"
+        help=(
+            "Password or path to wordlist file "
+            "of passwords to inspect"
+        ),
     )
 
-    #1.2. Create a --csv argument to allow output of CSV if toggled
     parser.add_argument(
         "--csv",
         action="store_true",
-        help="Generates CSV file with Password Inspector details about inspected passwords."
+        help=(
+            "Generate CSV output containing "
+            "Password Inspector details."
+        ),
     )
 
-    #1.3 Argument to output the current version of Password Inspector
     parser.add_argument(
         "--version",
         action="version",
         version=(
             f"Name: Password Inspector\n"
-            f"Summary: \n"
+            f"Summary: Privacy-first password analysis tool\n"
             f"Version: {__version__}\n"
             f"Home Page: https://github.com/ENdev-code/Password-Inspector\n"
             f"Author: Emmanuel Nkhoma\n"
             f"Author-email: emmanuelmnkhoma@gmail\n"
             f"License: MIT"
         ),
-        help="Shows the current version of Password Inspector."
+        help="Show the current version.",
     )
 
-    #1.4 Argument for creating reports, suitable for security audits
     parser.add_argument(
         "--report",
         action="store_true",
-        help="Generates Password Inspector report for inspected passwords."
+        help=(
+            "Generate a human-readable "
+            "Password Inspector report."
+        ),
     )
 
-    #2. Parse the arguments in Parser into a variable: args
     args = parser.parse_args()
 
-    # Making sure the main menu shows
-    if args.input is None and not args.report and not args.csv:
+    # -----------------------------------------------------------------------
+    # Interactive menu
+    # -----------------------------------------------------------------------
+
+    if (
+        args.input is None
+        and not args.report
+        and not args.csv
+    ):
         show_menu()
         return
 
-    #3. Inspection
-    # *** BATCH MODE: if path to wordlist.txt is provided ***
+    # -----------------------------------------------------------------------
+    # Batch mode
+    # -----------------------------------------------------------------------
+
     if args.input and Path(args.input).exists():
 
-        #3.1. Save path to wordlist
         path = Path(args.input)
 
-        #3.2. Read wordlist and split each password into a new line with no unnecessary spaces nor empty lines
         passwords = [
-            line.strip() for line in path.read_text().splitlines() if line.strip()
+            line.strip()
+            for line in path.read_text().splitlines()
+            if line.strip()
         ]
 
         if not passwords:
-            print(f"No passwords in file: '{path.name}'")
+            print_error(
+                f"No passwords found in '{path.name}'."
+            )
             return
 
-        print(f"Loading {len(passwords)} passwords from: '{path.name}' ... \n")
+        print_banner()
 
+        console.print(
+            f"\n[bold]Wordlist:[/bold] {path.name}"
+        )
+        console.print(
+            f"[bold]Passwords:[/bold] {len(passwords):,}"
+        )
 
-        #3.3. Iterate through passwords array and process passwords
-        inspected_passwords = []
-        total_passwords = len(passwords)
-        weak_passwords = pwned_passwords = 0
+        inspected_passwords = inspect_batch(passwords)
 
-        for i, pw in enumerate(passwords, 1):
-            inspected_pw = inspectPassword(pw)
+        display_batch_summary(inspected_passwords)
 
-            inspected_passwords.append(inspected_pw)
-
-            if inspected_pw['strong'] != "Very Strong" and inspected_pw['strong'] != "Strong" and inspected_pw['strong'] != "Fair":
-                weak_passwords += 1
-            if inspected_pw['pwned']:
-                pwned_passwords += 1
-
-            # 3.4. Live Progress Updates
-            progress: float = (i / total_passwords) * 100
-            print(f"Progress: {progress:.2f}% ({i}/{total_passwords}) passwords inspected ...", end="\r",flush=True)
-
-        #Processing Complete
-        #4. Output
-        print("=" * 80)
-        print(f"\n                  BATCH PASSWORD INSPECTION COMPLETE! \n\n"
-              f"Weak Passwords (%): {(weak_passwords/len(inspected_passwords)) *100:.2f}% [{weak_passwords:,}/{len(inspected_passwords)}] \n"
-              f"Breached Passwords (%): {(pwned_passwords/len(inspected_passwords))*100:.2f}% [{pwned_passwords:,}/{len(inspected_passwords)}] \n")
-        print("=" * 80 + "\n")
-
-        #5. Check if CSV has been toggled, if so, create and output CSV file for batch password inspection
+        # CSV takes priority over report, matching the original behaviour.
         if args.csv:
-            csv_writer = csv.writer(sys.stdout, lineterminator="\n")
-            csv_writer.writerow([ #Header Row
-                "password",
-                "score",
-                "strong",
-                "entropy_score",
-                "crack_time",
-                "guesses",
-                "entropy_bits",
-                "pwned",
-                "breach_count",
-                "issues"
-            ])
 
-            #Loop that adds rows in the CSV for fields in the header row
-            for ip in inspected_passwords:
-                strong = "Yes" if ip['strong'] else "No" or 'No'
-                breached = "Yes" if ip['pwned'] else "No" or 'No'
-                breach_count = ip['breach_count'] if ip['pwned'] else 0
+            output_csv(inspected_passwords)
 
-                #cleaning up issues, if any are present for that password
-                if ip['issues']:
-                    clean_issues:str = []
-                    for issue in ip['issues']:
-                        clean = issue.strip().lstrip("| ").strip()
-                        if clean:
-                            clean_issues.append(clean)
-                    issues = "\n".join(clean_issues)
-                else:
-                    issues = "None"
+            console.print()
+            print_success("CSV written to STDOUT.")
+            print_privacy_notice()
 
-                csv_writer.writerow([
-                    ip['password'],
-                    ip['score'],
-                    strong,
-                    ip['entropy_score'],
-                    ip['crack_time'],
-                    ip['guesses'],
-                    ip['entropy_bits'],
-                    breached,
-                    breach_count,
-                    issues
-                ])
-
-            print("\n CSV Written to STDOUT")
-            print("Privacy: K-anonymity and no passwords are logged.")
-
-        #5.1. Report has been toggled
         elif args.report:
-            # *** HUMAN READABLE AUDIT REPORT ***
-            print("=" * 80)
-            print(" " * 25 + "PASSWORD INSPECTOR REPORT")
-            print("=" * 80)
 
-            for ip in inspected_passwords:
-                password = ip['password']
-                score = ip['score']
-                strong = ip['strong']
-                status = "Breached" if ip['pwned'] else "Safe: No Breach Found"
-                breach_count = ip['breach_count'] if ip['pwned'] else 0
+            output_report(inspected_passwords)
 
-                print(f"\nINSPECTED PASSWORD: {password} \n\n"
-                      f"SECURITY SCORE:             {score} \n"
-                      f"ENTROPY SCORE(zxcvbn):      {ip['entropy_score']}\n"
-                      f"NUMBER OF GUESSES:          {ip['guesses']}\n"
-                      f"NUMBER OF BITS (ESTIMATE):  {ip['entropy_bits']}\n"
-                      f"CRACK TIME:                 {ip['crack_time']}\n"
-                      f"BREACH STATUS:              {status} \n"
-                      f"BREACH COUNT:               {breach_count}\n"
-                      f"STRENGTH LEVEL:             {strong}\n")
-
-
-                if ip['issues']:
-                    print("\nPASSWORD ISSUES & ADVICE:\n")
-                    for issue in ip['issues']:
-                        print(f" -> {issue}")
-                    if ip['pwned']:
-                        print(f" -> Breached {breach_count} times: CHANGE PASSWORD IMMEDIATELY!")
-                    print("\n")
-                    print("="*80)
-                else:
-                    if ip['pwned']:
-                        print("\nPASSWORD ISSUES:\n")
-                        print(f" -> Breached {breach_count} times: CHANGE PASSWORD IMMEDIATELY.")
-                    else:
-                        print("\n ** Password has no issues (Based on Password Inspector Criteria)\n")
-
-                    print("="*80)
-
-            #End of report
-            print(" " * 25 + "END OF PASSWORD INSPECTOR REPORT\n\n"
-                             "      Privacy: K-anonymity and no passwords are logged.")
-            print("=" * 80 + "\n")
-
-        #5.2. Both CSV and report have not been toggled
         else:
+
             for ip in inspected_passwords:
-                print("=" * 80)
-                status = "Breached" if ip['pwned'] else "Safe: Not Breached"
-                print(f"Password: '{ip['password']}'\n \n-> Strength Score: {ip['score']} \n-> Status: {status}")
+                display_password_result(ip)
 
-                if ip['issues']:
-                    print("="*80)
-                    print(f"Issues with Password: {ip['password']}: \n")
-                    for i, issue in enumerate(ip['issues'], 1):
-                        print("->" + issue)
-                print("="*80)
+        return
 
-                if status == "Breached":
-                    print(f"-> Breach Count: {ip['breach_count']}")
-                    print(f"{status} Recommendation: CHANGE PASSWORD AS SOON AS POSSIBLE.")
-                print("=" * 80)
+    # -----------------------------------------------------------------------
+    # Single password / interactive mode
+    # -----------------------------------------------------------------------
 
-            #End of Password Inspection
-            print(" " * 25 + "END OF PASSWORD INSPECTION\n"
-                             "      Privacy: K-anonymity and no passwords are logged.")
-            print("=" * 80 + "\n")
+    pw_to_inspect = args.input
 
-    # *** SINGLE PASSWORD / INTERACTIVE MODE ***
-    else:
-        pw_to_inspect = args.input or input("Enter Password to Inspect: ")
-        if not pw_to_inspect:
-            print("No password provided. Exiting...")
-            return
+    if pw_to_inspect is None:
+        pw_to_inspect = getpass.getpass(
+            "Enter Password to Inspect: "
+        )
 
-        inspected_pw = passwordInspector(pw_to_inspect)
-        print("=" * 80 + "\n")
+    if not pw_to_inspect:
+        print_error("No password provided. Exiting...")
+        return
+
+    # Keep your existing passwordInspector functionality.
+    passwordInspector(pw_to_inspect)
+
+    console.print()
+    print_privacy_notice()
+
+
+# ---------------------------------------------------------------------------
+# Interactive menu
+# ---------------------------------------------------------------------------
 
 def show_menu():
-    """This function will show the greeting menu and will abstract the logic of the underlying processes"""
+    """Display the interactive Password Inspector menu."""
+
     inspecting = True
+
     while inspecting:
-        print("--" * 40)
-        print("                          PASSWORD INSPECTOR")
-        print("--" * 40)
-        print("What would you like to do?\n"
-              " [0] How I work.\n"
-              " [1] Single Password Check.\n"
-              " [2] Password Batch Check (Report).\n"
-              " [3] Password Batch Check (CSV).\n"
-              " [4] Version.\n"
-              " [5] Help.\n"
-              " [6] Exit.")
-        print("--" * 40 + "\n")
 
-        choice = input("Enter Your Choice: ")
+        console.clear()
+        print_banner()
 
-        #What to do when the user chooses an option
-        #if they want to know more about Password Inspector
+        menu = Table(
+            show_header=False,
+            box=box.ROUNDED,
+            border_style="cyan",
+            padding=(0, 2),
+            expand=True,
+        )
+
+        menu.add_column(
+            "Option",
+            style="bold cyan",
+            width=10,
+        )
+
+        menu.add_column(
+            "Action",
+            style="white",
+        )
+
+        menu.add_row(
+            "[0]",
+            "How Password Inspector works",
+        )
+
+        menu.add_row(
+            "[1]",
+            "Single password check",
+        )
+
+        menu.add_row(
+            "[2]",
+            "Batch password check — Report",
+        )
+
+        menu.add_row(
+            "[3]",
+            "Batch password check — CSV",
+        )
+
+        menu.add_row(
+            "[4]",
+            "Version information",
+        )
+
+        menu.add_row(
+            "[5]",
+            "Help",
+        )
+
+        menu.add_row(
+            "[6]",
+            "Exit",
+        )
+
+        console.print(menu)
+
+        console.print()
+        choice = console.input(
+            "[bold cyan]Enter your choice › [/bold cyan]"
+        ).strip()
+
+        # -------------------------------------------------------------------
+        # How it works
+        # -------------------------------------------------------------------
+
         if choice == "0":
+
+            console.clear()
+            print_banner()
+            print_section("HOW IT WORKS")
+
             printGreeting()
-        #if they want to check one password
+
+            console.input(
+                "\n[dim]Press Enter to return to the menu...[/dim]"
+            )
+
+        # -------------------------------------------------------------------
+        # Single password
+        # -------------------------------------------------------------------
+
         elif choice == "1":
-            password = getpass.getpass("Enter Password to Inspect(input is hidden): ")
+
+            console.clear()
+            print_banner()
+            print_section("SINGLE PASSWORD CHECK")
+
+            password = getpass.getpass(
+                "Enter Password to Inspect (input hidden): "
+            )
+
             if password:
-                original_argv = sys.argv[:] #Snapshot of current arguments
-                sys.argv = [sys.argv[0], password] #simulation of actual command
-                try:
-                    main() #send arguments to the main function
-                finally:
-                    sys.argv = original_argv #clearing memory
-        #if they want to check multiple passwords in batchmode::report or ::csv
-        elif choice == "2" or choice == "3":
+
+                inspected_pw = inspectPassword(password)
+
+                display_password_result(inspected_pw)
+
+                print_privacy_notice()
+
+            else:
+
+                print_error(
+                    "No password entered."
+                )
+
+            console.input(
+                "\n[dim]Press Enter to return to the menu...[/dim]"
+            )
+
+        # -------------------------------------------------------------------
+        # Batch report / CSV
+        # -------------------------------------------------------------------
+
+        elif choice in ("2", "3"):
+
+            console.clear()
+            print_banner()
+
+            print_section(
+                "SELECT WORDLIST"
+            )
+
             file_path = dora()
-            mode = None
-            if choice =="2":
-                mode = "--report"
-            elif choice =="3":
-                mode = "--csv"
 
             if file_path:
-                original_argv = sys.argv[:]
-                sys.argv = [sys.argv[0], file_path, mode]
-                try:
-                    main()
-                finally:
-                    sys.argv = original_argv
-        #if they want to see what version Password Inspector is currently running at
-        elif choice == "4":
-            original_argv = sys.argv[:]
-            sys.argv = [sys.argv[0], "--version"]
-            try:
-                main()
-            finally:
-                sys.argv = original_argv
-        #if they want to see what else can be done with Password Inspector
-        elif choice == "5":
-            original_argv = sys.argv[:]
-            sys.argv = [sys.argv[0], "--help"]
-            try:
-                main()
-            finally:
-                sys.argv = original_argv
-        #They want to exit
-        elif choice == "6":
-            print("Thank you for using Password Inspector. Goodbye & Stay Safe!")
-            inspecting = False
-        else:
-            print("Invalid choice. Please make sure your choice is any number from 0 to 6.")
 
+                path = Path(file_path)
+
+                passwords = [
+                    line.strip()
+                    for line in path.read_text().splitlines()
+                    if line.strip()
+                ]
+
+                if not passwords:
+
+                    print_error(
+                        f"No passwords found in '{path.name}'."
+                    )
+
+                else:
+
+                    console.print(
+                        f"Loaded [bold cyan]{len(passwords):,}[/bold cyan] "
+                        f"passwords from "
+                        f"[bold]{path.name}[/bold]."
+                    )
+
+                    inspected_passwords = inspect_batch(
+                        passwords
+                    )
+
+                    display_batch_summary(
+                        inspected_passwords
+                    )
+
+                    if choice == "2":
+
+                        output_report(
+                            inspected_passwords
+                        )
+
+                    else:
+
+                        output_csv(
+                            inspected_passwords
+                        )
+
+                        console.print()
+                        print_success(
+                            "CSV written to STDOUT."
+                        )
+
+            else:
+
+                print_warning(
+                    "No file selected."
+                )
+
+            console.input(
+                "\n[dim]Press Enter to return to the menu...[/dim]"
+            )
+
+        # -------------------------------------------------------------------
+        # Version
+        # -------------------------------------------------------------------
+
+        elif choice == "4":
+
+            console.clear()
+            print_banner()
+
+            version_table = Table(
+                show_header=False,
+                box=box.ROUNDED,
+                border_style="cyan",
+                padding=(0, 2),
+            )
+
+            version_table.add_column(
+                "Property",
+                style="bold cyan",
+            )
+
+            version_table.add_column(
+                "Value"
+            )
+
+            version_table.add_row(
+                "Name",
+                "Password Inspector",
+            )
+
+            version_table.add_row(
+                "Version",
+                __version__,
+            )
+
+            version_table.add_row(
+                "Author",
+                "Emmanuel Nkhoma",
+            )
+
+            version_table.add_row(
+                "License",
+                "MIT",
+            )
+
+            version_table.add_row(
+                "Privacy",
+                "K-anonymity / No password logging",
+            )
+
+            console.print(version_table)
+
+            console.input(
+                "\n[dim]Press Enter to return to the menu...[/dim]"
+            )
+
+        # -------------------------------------------------------------------
+        # Help
+        # -------------------------------------------------------------------
+
+        elif choice == "5":
+
+            console.clear()
+            print_banner()
+
+            print_section("CLI HELP")
+
+            console.print(
+                "[bold]Single password:[/bold]\n"
+                "  python password_inspector.py MyPassword\n\n"
+
+                "[bold]Wordlist:[/bold]\n"
+                "  python password_inspector.py passwords.txt\n\n"
+
+                "[bold]Human-readable report:[/bold]\n"
+                "  python password_inspector.py passwords.txt --report\n\n"
+
+                "[bold]CSV output:[/bold]\n"
+                "  python password_inspector.py passwords.txt --csv\n\n"
+
+                "[bold]Version:[/bold]\n"
+                "  python password_inspector.py --version\n\n"
+
+                "[bold]Help:[/bold]\n"
+                "  python password_inspector.py --help"
+            )
+
+            console.print()
+            print_privacy_notice()
+
+            console.input(
+                "\n[dim]Press Enter to return to the menu...[/dim]"
+            )
+
+        # -------------------------------------------------------------------
+        # Exit
+        # -------------------------------------------------------------------
+
+        elif choice == "6":
+
+            console.clear()
+
+            console.print(
+                Panel(
+                    "[bold cyan]PASSWORD INSPECTOR[/bold cyan]\n\n"
+                    "[green]Thank you for using Password Inspector.[/green]\n"
+                    "[dim]Stay safe.[/dim]",
+                    border_style="cyan",
+                    box=box.ROUNDED,
+                    padding=(1, 4),
+                )
+            )
+
+            inspecting = False
+
+        # -------------------------------------------------------------------
+        # Invalid choice
+        # -------------------------------------------------------------------
+
+        else:
+
+            print_error(
+                "Invalid choice. Select a number from 0 to 6."
+            )
+
+            console.input(
+                "\n[dim]Press Enter to continue...[/dim]"
+            )
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     main()
+
