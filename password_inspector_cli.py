@@ -339,6 +339,8 @@ def show_menu():
             sys.argv = [sys.argv[0], "--version"]
             try:
                 main()
+            except SystemExit: #Argparse boots you out of runtime if you don't add this for --version and --help
+                pass
             finally:
                 sys.argv = original_argv
         #if they want to see what else can be done with Password Inspector
@@ -347,6 +349,8 @@ def show_menu():
             sys.argv = [sys.argv[0], "--help"]
             try:
                 main()
+            except SystemExit:
+                pass
             finally:
                 sys.argv = original_argv
         #They want to exit

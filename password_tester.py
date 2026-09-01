@@ -16,7 +16,7 @@ def printGreeting():
     print("WHAT I DO: \n\n"
           "     1. Receive a password or password.txt file as input \n"
           "     2. Evaluate a password's strength and check if it has been breached \n"
-          "     3. Output neat results")
+          "     3. Output neat results\n")
     print("=" * 80)
     print("                     PASSWORD INSPECTING CRITERIA")
     print("=" * 80)
@@ -49,29 +49,28 @@ def passwordInspector(password:str):
         b. Breach status
     """
 
-    print("=" * 80)
-    print(f"Password Entered: {password} \n\n"
-          f"Beginning Inspection ...")
+    print(f"\nBeginning Inspection ...\n")
     print("=" * 80)
 
 
     #1. Strength Check via checkStrength
     print("                              1. STRENGTH CHECK...")
     print("="*80)
+
     result = checkStrength(password)
     print
-    print(f"\nPassword Strength: {result['score']}/100")
+    print(f"\n\nPassword Strength: {result['score']}/100")
     print(f"\nEntropy Score (zxcvbn): {result['entropy_score']}")
     print(f"\nCrack Time: {result['crack_time']}")
-    print(f"\nNumber of Guesses: {result['guesses']}")
+    print(f"\nNumber of Guesses: {result['guesses']}\n\n")
     print("=" * 80)
     if result['issues']:
-        print("Noted the Following Issues and Provided Advice: \n\n " + " \n\n ".join(result['issues']))
+        print("\nNoted the Following Issues and Provided Advice: \n\n " + " \n\n ".join(result['issues']))
     else:
-        print("All checks passed!")
+        print("\nAll checks passed!\n")
     print("=" * 80)
-    status = f"{result['score']}% strong [{result['strong']}]" if result['strong'] else "Areas to fix shown above."
-    print(f"\nPassword is {status} by Password Inspector standard.")
+    status = f"{result['score']}% [{result['strong']}]" if result['strong'] else "Areas to fix shown above."
+
     print("="*80)
 
     #2. Breach Check
@@ -80,14 +79,16 @@ def passwordInspector(password:str):
     pwned, count = checkBreached(password)
 
     if pwned:
-        print(f"Password {password} has been breached.\n"
-              f"Breach Count [How many times]: {count} \n"
-              f"CHANGE PASSWORD AS SOON AS POSSIBLE!")
+        print(f"\nPassword {password} has been breached.\n"
+              f"\nBreach Count [How many times]: {count} \n"
+              f"\nPassword is unsafe to use by Password Inspector standard.\n"
+              f"\nCHANGE PASSWORD AS SOON AS POSSIBLE!\n")
     else:
-        print("All good! No breaches found.")
+        print("\nAll good! No breaches found [safe to use].\n")
+        print(f"\nSCORE: {status} by Password Inspector standard.\n")
     print("=" * 80)
-    print("[Privacy: Password processed in memory only. No logs.]\n")
-    print("[K-Anonymity: Password matched locally with retrieved breached passwords.]")
+    print("\n[Privacy: Password processed in memory only. No logs.]\n")
+    print("[K-Anonymity: Password matched locally with retrieved breached passwords.]\n")
     print("=" * 80)
 
 if __name__ == "__main__":
