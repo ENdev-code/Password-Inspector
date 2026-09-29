@@ -75,6 +75,8 @@ def show_issues(issues, pwned, breach_count):
     tree = Tree("Issues & Advice for Password:", style="bold bright_red")
     for issue in issues:
         tree.add(f"-> {issue}")
+    else:
+        tree.add(f"->NO ISSUES")
 
     if pwned:
         tree.add(f"Password Breached (Breach Count: {breach_count}.\nDO NOT USE THIS PASSWORD", style="bold white on red")
