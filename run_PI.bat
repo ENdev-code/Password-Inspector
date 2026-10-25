@@ -13,7 +13,7 @@ title Password Inspector - Setup
 
 echo ================================================================
 echo                        PASSWORD INSPECTOR
-echo                              v2.13
+echo                              v2.24
 echo                     One-Click Setup ^& Launch
 echo ================================================================
 echo

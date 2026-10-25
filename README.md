@@ -1,8 +1,8 @@
-# Password Inspector v2.13
+# Password Inspector v2.24
 
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
 [![CLI Tool](https://img.shields.io/badge/tool-CLI-red)](#how-to-use)
-[![Version: v2.13](https://img.shields.io/badge/version-v2.13-success)](https://github.com/ENdev-code/Password-Inspector/releases)
+[![Version: v2.24](https://img.shields.io/badge/version-v2.24-success)](https://github.com/ENdev-code/Password-Inspector/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security: Privacy-First](https://img.shields.io/badge/security-privacy--first-green)](#privacy--security)
 [![HIBP k-anonymity](https://img.shields.io/badge/HIBP-k--anonymity-orange)](#features)
@@ -13,14 +13,17 @@
 
 > **No logs. No storage. Just Clarity and Privacy.**
 
-Password Inspector is an open-source, modular CLI tool designed and created for cybersecurity enthusiasts, auditors, developers and corporate IT teams. It evaluates password strength based on password length, entropy & whether or not there are recurring characters and then checks public databases if passwords have been breached via k-anonymity ensuring that no passwords are logged nor are they sent in plaintext. Built cleanly, with maintainable code and documentation under MIT License.
+Password Inspector is an open-source, modular CLI tool designed and created for cybersecurity enthusiasts, auditors, developers, corporate IT teams and anyone who wants to know how strong their password is. It evaluates password strength based on password length, entropy & whether or not there are recurring characters and then checks public databases if passwords have been breached via k-anonymity ensuring that no passwords are logged. No password sent in plaintext. Built cleanly, with maintainable code and documentation under MIT License.
 
 
 **Author**: Emmanuel Nkhoma  
 **GitHub**: [@ENdev-code](https://github.com/ENdev-code)  
 **License**: MIT  
 **Created**: November 2025  
-**Current Version**: `v2.13`
+**Current Version**: `v2.24`
+
+> Do you really know how strong your passwords are? Find out with Password Inspector.  
+>   _~ Emmanuel Nkhoma AKA ENdev-code_
 
 ---
 
@@ -60,7 +63,10 @@ Below is the scoring criteria for passwords that Password Inspector will use
 | 20+ characters | 20 | 
 | No 3+ repeating chars | 10 |
 
-> An entropy check to determine how easily a password can be cracked via zxcvbn Total points to contribute = 40.
+> An entropy check to determine how easily or likely a password can be cracked via zxcvbn.
+> 
+> Total entropy points to contribute to scoring criteria = 40.
+
 
 | Entropy Score (zxcvbn) | Custom Score |
 |------------------------|--------------|
@@ -101,8 +107,12 @@ git clone https:/github.com/ENdev-code/Password-Inspector.git
 cd Password-Inspector
 ```
 
-**Scenario A - Step 2: Easy Route (.bat file)**
-- Open the folder where Password Inspector is and double-click the .bat file called run_PI.bat
+**Scenario A - Step 2: Easy Route (.bat file/.sh file)**
+- On Windows: Open the folder where Password Inspector is and double-click the .bat file called run_PI.bat
+- On Linux: Navigate to the Password Inspector directory and run the following command
+```bash
+./run_PI.sh 
+```
 
 **Scenario B - Step 2: Create Virtual Environment**
 ```bash
@@ -179,5 +189,4 @@ python password_inspector_cli.py yourwordlist.txt --csv > report.csv
 ```
 --- 
 
-> Do you really know how strong your passwords are? Find out with Password Inspector.  
->~ Emmanuel Nkhoma AKA ENdev-code
+

@@ -1,5 +1,5 @@
 """
-Password Inspector v2.13
+Password Inspector v2.24
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """
@@ -75,8 +75,6 @@ def show_issues(issues, pwned, breach_count):
     tree = Tree("Issues & Advice for Password:", style="bold bright_red")
     for issue in issues:
         tree.add(f"-> {issue}")
-    else:
-        tree.add(f"->NO ISSUES")
 
     if pwned:
         tree.add(f"Password Breached (Breach Count: {breach_count}.\nDO NOT USE THIS PASSWORD", style="bold white on red")
@@ -126,14 +124,27 @@ def make_report(ip):
             box=box.ROUNDED
         )
 
-
+#Function that asks for a file path
+def pathfinder():
+    path = input("Enter path to .txt file: ").strip()
+    return path or None
 
 #Function that handles opening file explorer when needed
 def dora() -> str | None:
     """Opens file explorer to allow user to search for .txt file to inspect via GUI window."""
-    root = tk.Tk()
-    root.withdraw() #closes the empty tkinter window
-    root.attributes('-topmost', True) #Makes the file explorer window the highest priority
+    try:
+        root = tk.Tk()
+        root.withdraw() #closes the empty tkinter window
+        root.attributes('-topmost', True) #Makes the file explorer window the highest priority
+
+    except ImportError as i: #tkinter missing
+        console.print(Text(f"Error: tkinter not installed. Try running: sudo apt install python3-tk\n({i})", style="red"))
+        return pathfinder()
+
+    except tk.TclError as e:  # tkinter missing, or no display available
+        console.print(Text(f"Error: File picker unavailable.\n({e})", style="red"))
+        return pathfinder()
+
     file_path = filedialog.askopenfilename(
         title="Open File(.txt) to Inspect.",
         filetypes=[
