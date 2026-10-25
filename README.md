@@ -23,7 +23,7 @@ Password Inspector is an open-source, modular CLI tool designed and created for 
 **Current Version**: `v2.24`
 
 > Do you really know how strong your passwords are? Find out with Password Inspector.  
->   _~ Emmanuel Nkhoma AKA ENdev-code_
+>   ~ Emmanuel Nkhoma AKA ENdev-code
 
 ---
 
