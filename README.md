@@ -1,8 +1,8 @@
-# Password Inspector v2.24
+# Password Inspector v2.33
 
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
 [![CLI Tool](https://img.shields.io/badge/tool-CLI-red)](#how-to-use)
-[![Version: v2.24](https://img.shields.io/badge/version-v2.24-success)](https://github.com/ENdev-code/Password-Inspector/releases)
+[![Version: v2.33](https://img.shields.io/badge/version-v2.33-success)](https://github.com/ENdev-code/Password-Inspector/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security: Privacy-First](https://img.shields.io/badge/security-privacy--first-green)](#privacy--security)
 [![HIBP k-anonymity](https://img.shields.io/badge/HIBP-k--anonymity-orange)](#features)
@@ -20,7 +20,7 @@ Password Inspector is an open-source, modular CLI tool designed and created for 
 **GitHub**: [@ENdev-code](https://github.com/ENdev-code)  
 **License**: MIT  
 **Created**: November 2025  
-**Current Version**: `v2.24`
+**Current Version**: `2.33`
 
 > Do you really know how strong your passwords are? Find out with Password Inspector.  
 >   ~ Emmanuel Nkhoma AKA ENdev-code
@@ -80,10 +80,10 @@ Below is the scoring criteria for passwords that Password Inspector will use
 - **Very Strong:**         ≥ 85 points 
 - **Strong:**              ≥ 65 points 
 - **Fair:**                ≥ 45 points (Consider editing)
-- **Weak:**                ≥ 20 points (Strongly recommend changing password)
+- **Weak:**                ≥ 20 points (Strongly recommend changing password, especially if breached)
 - **Very Weak:**           < 20 points (Change password.)
 
-If breached, CHANGE PASSWORD IMMEDIATELY.
+> **If your password is breached, CHANGE PASSWORD IMMEDIATELY.**
 ---
 
 ## Use Cases
@@ -121,14 +121,14 @@ source .venv/bin/activate
 #On Windows: & .\venv\Scripts\Activate.ps1
 ```
 
-**Step 3: Run Script**
-```bash
-python password_inspector_cli.py
-```
-
-**Step 4: Install Dependencies**
+**Step 3: Install Dependencies**
 ```bash
 pip install -r requirements.txt
+```
+
+**Step 4: Run Script**
+```bash
+python password_inspector_cli.py
 ```
 
 Requirements:

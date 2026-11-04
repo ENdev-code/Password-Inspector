@@ -9,11 +9,11 @@ REM  + Launches the interactive menu.
 REM ============================================================
 
 REM Setting terminal window title
-title Password Inspector - Setup
+title Password Inspector v2.33 - Setup
 
 echo ================================================================
 echo                        PASSWORD INSPECTOR
-echo                              v2.24
+echo                              v2.33
 echo                     One-Click Setup ^& Launch
 echo ================================================================
 echo

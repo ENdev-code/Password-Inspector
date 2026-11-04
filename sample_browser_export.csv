@@ -1,0 +1,20 @@
+﻿name,url,username,password,note
+GitHub,https://github.com/login,tester@example.com,CORRECTHORSESTAPLE,
+Gmail,https://accounts.google.com,tester@example.com,P@ssw0rd!,
+Netflix,https://www.netflix.com/login,tester@example.com,iloveyou,family plan
+Facebook,https://www.facebook.com,tester.fb,qwerty,
+Old Router,,admin,admin,no url saved: source falls back to the name column
+Bank,https://bank.example.mw,,MonkeyDLuffy,no username: source is just the site. King of the pirates
+Work VPN,https://vpn.example.com,t.user,Tq9#vLm2!xRw8@Zk4$Bn,long random password
+Forum,https://forum.example.org,tester,"pa,ss""word",comma and quote inside the password
+Shop,https://shop.example.com,tester,pässwörd€,unicode characters
+Unsaved Site,https://unsaved.example.com,tester,,no password saved: this row should be skipped
+,,guest,123456,no name or url: source falls back to the username
+Streaming,https://stream.example.net,tester,lululemondrink,
+Chat,https://chat.example.com,tester,donxuiote doflamingo,passphrase with a space
+Blog,https://blog.example.com,tester,letmein,
+Game,https://game.example.com,tester,monkey,
+Wiki,https://wiki.example.com,tester,lolololololo,repeated characters
+Cloud,https://cloud.example.com,tester,abc123,
+Photos,https://photos.example.com,tester,wowgr8,
+Portal,https://portal.example.com,tester,password,

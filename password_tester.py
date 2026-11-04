@@ -1,5 +1,5 @@
 """
-Password Inspector v2.24
+Password Inspector v2.33
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """
@@ -55,8 +55,8 @@ def printGreeting():
     entropy.add_row(Text("3", style="bold bright_green"), Text("Safely Unguessable", style="bold bright_green"), Text("24", style="bold bright_green"))
     entropy.add_row(Text("4", style="bold green1"), Text("Somewhat Guessable", style="bold green1"), Text("40", style="bold green1"))
 
-    desc = Text("\nThis is my scoring criteria in relation to entropy.")
-    pi_entropy = Group(desc, Align.center(entropy))
+    desc = Text("\nThis is my scoring criteria in relation to entropy.\n[How easily guessable your password is]")
+    pi_entropy = Group(Align.center(desc), Align.center(entropy))
     console.print(Panel(pi_entropy, title="ENTROPY SCORE TRANSLATOR", title_align="center", box=box.DOUBLE, style="bold bright_white"))
     console.print()
 

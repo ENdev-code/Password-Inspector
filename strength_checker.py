@@ -1,5 +1,5 @@
 """
-Password Inspector v2.24
+Password Inspector v2.33
 Copyright (c) 2025 Emmanuel Nkhoma
 MIT License - See LICENSE file
 """

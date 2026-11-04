@@ -7,12 +7,12 @@
 # ============================================================
 
 # Setting up terminal window title
-printf '\033]0;Password Inspector v2.24\007'
+printf '\033]0;Password Inspector v2.33\007'
 
 echo "================================================================"
 echo "                       PASSWORD INSPECTOR"
-echo "                             v2.24"
-echo "                    One-Click Setup ^& Launch"
+echo "                             v2.33"
+echo "                    One-Click Setup & Launch"
 echo "================================================================"
 echo
 echo "One moment, setting things up...."
