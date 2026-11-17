@@ -22,7 +22,7 @@ def printGreeting():
     # Greeting and Manual
 
     tasks = Tree("WHAT I DO:\n\n", style="bold light_cyan1")
-    tasks.add("1. Receive a password or password.txt file as input \n")
+    tasks.add("1. Receive a password or password.txt/.csv file as input \n")
     tasks.add("2. Evaluate a password's strength and check if it has been breached \n")
     tasks.add("3. Output neat results\n")
     console.print(Panel(Align.center(tasks),title="PASSWORD INSPECTOR", style="bold bright_white", box=box.DOUBLE, title_align="center"))
